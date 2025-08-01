@@ -62,8 +62,8 @@ $total = $subtotal + $pajak;
         <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
             <div class="relative flex items-center justify-center px-10 py-4">
                 <div class="absolute left-10 top-1/2 -translate-y-1/2">
-                    <div class="w-10 h-10">
-                        <img src="/resto-unikom/assets/images/logo.png" alt="Logo" class="w-full h-full object-contain">
+                    <div class="w-18 h-18">
+                        <img src="../img/myresto_icon.jpg" alt="Logo" class="w-full h-full object-contain">
                     </div>
                 </div>
                 <span class="text-2xl font-bold">MyResto</span>
