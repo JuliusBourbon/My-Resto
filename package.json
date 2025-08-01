@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx @tailwindcss/cli -i ./view/input.css -o ./output.css --watch"
+    "dev:css": "npx tailwindcss -i ./view/input.css -o ./output.css --watch",
+    "dev:sync": "browser-sync start --config bs-config.js",
+    "dev": "concurrently \"npm run dev:css\" \"npm run dev:sync\""
   },
   "keywords": [],
   "author": "",
@@ -12,6 +14,7 @@
   "description": "",
   "dependencies": {
     "@tailwindcss/cli": "^4.1.11",
+    "concurrently": "^9.2.0",
     "tailwindcss": "^4.1.11"
   }
 }
