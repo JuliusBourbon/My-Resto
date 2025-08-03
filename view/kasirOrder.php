@@ -1,4 +1,6 @@
 <?php
+
+$currentPage = basename($_SERVER['PHP_SELF']);
 // -- Data Statis untuk Frontend --
 
 // 1. Data Order (Statis)
@@ -73,9 +75,9 @@ $total = $subtotal + $pajak;
                     </div>
                 </div>
             </div>
-             <div class="px-10">
+             <div class="px-10 flex gap-10">
                 <div class="flex items-center gap-6 pt-1">
-                    <a href="#" class="py-2 text-blue-700 font-semibold border-b-2 border-blue-700">Pesanan</a>
+                    <a href="kasirOrder.php" class="py-2 font-semibold transition <?= $currentPage === 'kasirOrder.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Pesanan</a>
                 </div>
             </div>
         </nav>
