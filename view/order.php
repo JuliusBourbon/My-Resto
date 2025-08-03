@@ -1,4 +1,6 @@
 <?php
+
+    $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
 // -- Data Statis untuk Frontend --
 
 // 1. Data Kategori Menu (Statis)
@@ -60,24 +62,30 @@ $menu_items = [
 
     <div class="flex flex-col min-h-screen">
         <!-- ====== Navbar Atas ====== -->
-        <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 flex flex-col">
-            <div class="relative flex items-center justify-center px-10 py-4 box-border">
-                <div class="absolute left-10 top-1/2 -translate-y-1/2 flex items-center">
+        <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
+            <div class="relative flex items-center justify-center px-10 py-4">
+                <div class="absolute left-10 top-1/2 -translate-y-1/2">
                     <div class="w-18 h-18">
                         <img src="../img/myresto_icon.jpg" alt="Logo" class="w-full h-full object-contain">
                     </div>
                 </div>
                 <span class="text-2xl font-bold">MyResto</span>
-                <div class="absolute right-10 top-1/2 -translate-y-1/2 flex items-center">
+                <div class="absolute right-10 top-1/2 -translate-y-1/2">
                     <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white cursor-pointer">
-                        <i data-feather="user"></i>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     </div>
                 </div>
             </div>
-            <div class="flex gap-5 justify-start px-10 h-12">
-                <a href="#" class="text-gray-500 py-2.5 px-1 flex items-center gap-1.5 border-b-[3px] border-transparent font-medium transition-colors">Meja</a>
-                <a href="#" class="text-blue-700 font-semibold border-b-[3px] border-blue-700 py-2.5 px-1 flex items-center gap-1.5 transition-colors">Pesanan</a>
-                <a href="#" class="text-gray-500 py-2.5 px-1 flex items-center gap-1.5 border-b-[3px] border-transparent font-medium transition-colors">Notifikasi</a>
+             <div class="px-10 flex gap-10">
+                <div class="flex items-center gap-6 pt-1">
+                    <a href="meja.php" class="py-2 font-semibold transition <?= $currentPage === 'meja.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Meja</a>
+                </div>
+                <div class="flex items-center gap-6 pt-1">
+                    <a href="order.php" class="py-2 font-semibold transition <?= $currentPage === 'order.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Pesanan</a>
+                </div>
+                <div class="flex items-center gap-6 pt-1">
+                    <a href="notifikasi.php" class="py-2 font-semibold transition<?= $currentPage === 'notifikasi.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Notifikasi</a>
+                </div>
             </div>
         </nav>
 

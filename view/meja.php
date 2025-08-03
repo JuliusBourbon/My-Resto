@@ -1,3 +1,7 @@
+<?php
+    $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +18,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <title>Meja</title>
 </head>
-<body class="bg-gray-50 pt-[118px]">
+<body class="bg-gray-100 pt-[118px]">
     <div class="flex flex-col">
         <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
             <div class="relative flex items-center justify-center px-10 py-4">
@@ -32,13 +36,13 @@
             </div>
              <div class="px-10 flex gap-10">
                 <div class="flex items-center gap-6 pt-1">
-                    <a href="#" class="py-2 text-blue-700 font-semibold border-b-2 border-blue-700">Meja</a>
+                    <a href="meja.php" class="py-2 font-semibold transition <?= $currentPage === 'meja.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Meja</a>
                 </div>
                 <div class="flex items-center gap-6 pt-1">
-                    <a href="#" class="py-2 text-gray-500 font-semibold">Pesanan</a>
+                    <a href="order.php" class="py-2 font-semibold transition <?= $currentPage === 'order.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Pesanan</a>
                 </div>
                 <div class="flex items-center gap-6 pt-1">
-                    <a href="#" class="py-2 text-gray-500 font-semibold">Notifikasi</a>
+                    <a href="notifikasi.php" class="py-2 font-semibold transition<?= $currentPage === 'notifikasi.php' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">Notifikasi</a>
                 </div>
             </div>
         </nav>
