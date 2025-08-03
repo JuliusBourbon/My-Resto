@@ -30,9 +30,15 @@
                     </div>
                 </div>
             </div>
-             <div class="px-10">
+             <div class="px-10 flex gap-10">
                 <div class="flex items-center gap-6 pt-1">
-                    <a href="#" class="py-2 text-blue-700 font-semibold border-b-2 border-blue-700">Pesanan</a>
+                    <a href="#" class="py-2 text-blue-700 font-semibold border-b-2 border-blue-700">Meja</a>
+                </div>
+                <div class="flex items-center gap-6 pt-1">
+                    <a href="#" class="py-2 text-gray-500 font-semibold">Pesanan</a>
+                </div>
+                <div class="flex items-center gap-6 pt-1">
+                    <a href="#" class="py-2 text-gray-500 font-semibold">Notifikasi</a>
                 </div>
             </div>
         </nav>
@@ -184,11 +190,86 @@
                     </div>
                 </div>
             </div>
-            <div class="flex bg-amber-400 justify-center items-center">
-                <h1>Daftar Meja</h1>
+            <div class="flex justify-center flex-col items-center mx-5">
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-1</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-2</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-3</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-4</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-5</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-6</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
+                        <h1 class=" text-xl">11-7</h1>
+                    </div>
+                </div>
+                <div class="flex gap-5 items-center">
+                    <div class="w-8 h-8 bg-gray-300">
+                        <h1></h1>
+                    </div>
+                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center">
+                        <h1 class=" text-xl">11-8</h1>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <div class="fixed bottom-0 left-0 right-0 z-50 px-10 py-4 bg-white border-t border-gray-200">
+            <div class="flex justify-between w-full bg-white h-30 items-center">
+                <div class="mx-10 flex flex-col gap-5">
+                    <h1>Meja Tersedia: </h1>
+                    <h1>Meja Penuh: </h1>
+                </div>
+    
+                <div class="flex items-center">
+                    <input type="button" value="Reservasi" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-200">
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
