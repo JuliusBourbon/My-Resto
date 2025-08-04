@@ -1,5 +1,6 @@
 <?php
     $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
+    require('../src/mejaDb.php');
 ?>
 
 <!DOCTYPE html>
@@ -11,6 +12,15 @@
         body {
             font-family: 'Poppins', sans-serif;
         }
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
     </style>
     <link href="../output.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +29,7 @@
     <title>Meja</title>
 </head>
 <body class="bg-gray-100 pt-[118px]">
-    <div class="flex flex-col">
+    <div id="main" class="flex flex-col">
         <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
             <div class="relative flex items-center justify-center px-10 py-4">
                 <div class="absolute left-10 top-1/2 -translate-y-1/2">
@@ -54,226 +64,132 @@
                 <h1 class="bg-gray-300 py-2 px-5 rotate-[-90deg]">Pintu</h1>
             </div>
             <!-- </div> -->
-            <div class="w-full grid grid-cols-5 gap-5">
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
+            <div class="w-full grid grid-cols-5 gap-5 p-4">
+                <?php while ($row = $meja->fetch_assoc()) : ?>
+                    <div class="w-full flex flex-col justify-center items-center">
+                        <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
+                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
                         </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
+
+                        <div class="w-full flex items-center justify-center gap-5">
+                            <div class="w-30 h-30 rounded-full flex items-center justify-center
+                                <?php echo $row['status'] === 'Tersedia' ? 'bg-green-300' : 'bg-red-400'; ?>">
+                                <h1 class="text-center">
+                                    <?=$row['nomor']?> <br> <?=$row['status']?>
+                                </h1>
+                            </div>
                         </div>
-                    </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
+
+                        <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
+                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                            <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
                         </div>
                     </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="w-full flex flex-col justify-center items-center">
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                    <div class="w-full flex items-center justify-center gap-5">
-                        <div class="w-30 h-30 rounded-full bg-gray-300 flex items-center justify-center">
-                            <h1 class="text-center">1 <br> Tersedia</h1>
-                        </div>
-                    </div>
-                    <div class="w-24 h-24 rounded-full flex items-center justify-center gap-5">
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                        <div class="w-8 h-8 bg-gray-300">
-                            <h1></h1>
-                        </div>
-                    </div>
-                </div>
+                <?php endwhile; ?>
             </div>
             <div class="flex justify-center flex-col items-center mx-5">
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
+                <?php while ($row = $meja11->fetch_assoc()) : ?>
+                    <div class="flex gap-5 items-center mb-2">
+                        <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                        <div class="w-15 h-15 flex items-center justify-center border-b-2 border-black-300
+                            <?= $row['status'] === 'Reserved' ? 'bg-red-400' : 'bg-gray-300' ?>">
+                            <h1 class="text-xl">11-<?= $counter ?></h1>
+                        </div>
                     </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-1</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-2</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-3</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-4</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-5</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-6</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center border-b-2 border-black-300">
-                        <h1 class=" text-xl">11-7</h1>
-                    </div>
-                </div>
-                <div class="flex gap-5 items-center">
-                    <div class="w-8 h-8 bg-gray-300">
-                        <h1></h1>
-                    </div>
-                    <div class="w-15 h-15 bg-gray-300 flex items-center justify-center">
-                        <h1 class=" text-xl">11-8</h1>
-                    </div>
-                </div>
+                    <?php $counter++; ?>
+                <?php endwhile; ?>
             </div>
         </div>
 
         <div class="fixed bottom-0 left-0 right-0 z-50 px-10 py-4 bg-white border-t border-gray-200">
             <div class="flex justify-between w-full bg-white h-30 items-center">
                 <div class="mx-10 flex flex-col gap-5">
-                    <h1>Meja Tersedia: </h1>
-                    <h1>Meja Penuh: </h1>
+                    <h1>Meja Tersedia: <?= $tersedia?></h1>
+                    <h1>Meja Penuh: <?= $penuh?></h1>
                 </div>
     
                 <div class="flex items-center">
-                    <input type="button" value="Reservasi" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-200">
+                    <input type="button" id="Reservasi" value="Reservasi" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-200">
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center h-screen hidden" id="reservasiModal">
+        <div class="flex justify-center items-center shadow-md rounded-md bg-white w-1/3">
+            <div class="flex flex-col items-center p-6">
+                <h1 class="text-2xl font-semibold mb-4">Reservasi</h1>
+                <form action="../src/mejaDb.php" method="POST" class="w-full">
+                    <h1 class="mb-2">No. Meja</h1>
+                    <select name="meja" class="w-full p-2 mb-4 border rounded" required>
+                        <?php while ($row = $mejaTersedia->fetch_assoc()) : ?>
+                            <?php
+                                // Khusus meja nomor 11, beri label 11-1, 11-2, ...
+                                if ($row['nomor'] == 11) {
+                                    $label = '11-' . $counter11;
+                                    $counter11++;
+                                } else {
+                                    $label = $row['nomor'];
+                                }
+                            ?>
+                            <option value="<?= $row['nomor'] ?>"><?= $label ?></option>
+                        <?php endwhile; ?>
+                    </select>
+
+                    <h1 class="mb-2">Nama Pelanggan</h1>
+                    <input type="text" name="nama" placeholder="Nama Pelanggan" class="w-full p-2 mb-4 border rounded" required>
+
+                    <h1 class="mb-2">Jumlah Pelanggan</h1>
+                    <div class="flex justify-between items-center gap-2 mb-4">
+                        <input type="button" value="1" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
+                        <input type="button" value="2" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
+                        <input type="button" value="3" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
+                        <input type="number" id="jumlahCustom" placeholder="Custom" class="text-xl text-center border rounded-sm w-1/3 bg-gray-100" min="1">
+                    </div>
+
+                    <!-- hidden input untuk dikirim ke PHP -->
+                    <input type="hidden" name="jumlah" id="jumlahInput" required>
+
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-200 w-full">
+                        Reservasi
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 </body>
+
+<script>
+    document.getElementById('Reservasi').addEventListener('click', function () {
+        document.getElementById('reservasiModal').classList.remove('hidden');
+        document.getElementById('main').classList.add('blur-sm');
+    });
+
+    // Tutup modal jika klik di luar isi modal
+    window.addEventListener('click', function (event) {
+        const modal = document.getElementById('reservasiModal');
+        const modalContent = modal.querySelector('div');
+
+        if (event.target === modal) {
+            modal.classList.add('hidden');
+            main.classList.remove('blur-sm');
+        }
+    });
+
+    const jumlahButtons = document.querySelectorAll('.btn-jumlah');
+    const jumlahInput = document.getElementById('jumlahInput');
+    const jumlahCustom = document.getElementById('jumlahCustom');
+
+    jumlahButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            jumlahInput.value = button.value;
+            jumlahCustom.value = ''; // kosongkan custom jika tombol dipilih
+        });
+    });
+
+    jumlahCustom.addEventListener('input', () => {
+        jumlahInput.value = jumlahCustom.value;
+    });
+</script>
 </html>
