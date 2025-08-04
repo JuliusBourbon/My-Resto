@@ -1,15 +1,17 @@
 <?php
 
+    require('../src/pesananDb.php');
     $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
-// -- Data Statis untuk Frontend --
+    
+    // -- Data Statis untuk Frontend --
 
 // 1. Data Kategori Menu (Statis)
-$kategori_menu = [
-    ['id_kategori' => 1, 'nama_kategori' => 'Sarapan', 'warna_bg_class' => 'bg-[#C8F6BC]'],
-    ['id_kategori' => 2, 'nama_kategori' => 'Hidangan Utama', 'warna_bg_class' => 'bg-[#FFD27E]'],
-    ['id_kategori' => 3, 'nama_kategori' => 'Minuman', 'warna_bg_class' => 'bg-[#A2F9FF]'],
-    ['id_kategori' => 4, 'nama_kategori' => 'Penutup', 'warna_bg_class' => 'bg-[#FEC0FF]'],
-];
+// $kategori_menu = [
+//     ['id_kategori' => 1, 'nama_kategori' => 'Sarapan', 'warna_bg_class' => 'bg-[#C8F6BC]'],
+//     ['id_kategori' => 2, 'nama_kategori' => 'Hidangan Utama', 'warna_bg_class' => 'bg-[#FFD27E]'],
+//     ['id_kategori' => 3, 'nama_kategori' => 'Minuman', 'warna_bg_class' => 'bg-[#A2F9FF]'],
+//     ['id_kategori' => 4, 'nama_kategori' => 'Penutup', 'warna_bg_class' => 'bg-[#FEC0FF]'],
+// ];
 
 // 2. Data Item Menu (Statis)
 $menu_items = [
@@ -98,180 +100,217 @@ $menu_items = [
                     <input type="text" placeholder="Search" class="w-full bg-white pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="grid grid-cols-4 gap-5">
-                    <?php foreach ($kategori_menu as $kategori): ?>
-                        <button class="p-4 rounded-lg text-center font-semibold text-gray-700 shadow-sm h-36 flex items-center justify-center <?php echo htmlspecialchars($kategori['warna_bg_class']); ?>">
-                            <span><?php echo htmlspecialchars($kategori['nama_kategori']); ?></span>
+                    <?php while ($row = $kategori->fetch_assoc()) :
+                        $bgClass = '';
+
+                        switch ($row['nama_kategori']) {
+                            case 'Sarapan':
+                                $bgClass = 'bg-[#C8F6BC]';
+                                break;
+                            case 'Hidangan Utama':
+                                $bgClass = 'bg-[#FFD27E]';
+                                break;
+                            case 'Minuman':
+                                $bgClass = 'bg-[#A2F9FF]';
+                                break;
+                            case 'Penutup':
+                                $bgClass = 'bg-[#FEC0FF]';
+                                break;
+                            default:
+                                $bgClass = 'bg-gray-200'; 
+                        }
+                    ?>
+                        <button class="p-4 rounded-lg text-center font-semibold text-gray-700 shadow-sm h-36 flex items-center justify-center <?= $bgClass ?>">
+                            <span><?= $row['nama_kategori'] ?></span>
                         </button>
-                    <?php endforeach; ?>
+                    <?php endwhile; ?>
                 </div>
                 
                 <hr class="border-t border-gray-200">
 
                 <div class="grid grid-cols-4 gap-5 overflow-y-auto pr-2">
-                    <?php foreach ($menu_items as $id_kategori => $items): ?>
-                        <?php
-                            $bgColorClass = 'bg-gray-200';
-                            foreach ($kategori_menu as $kategori) {
-                                if ($kategori['id_kategori'] == $id_kategori) {
-                                    $bgColorClass = $kategori['warna_bg_class'];
-                                    break;
-                                }
-                            }
-                        ?>
-                        <?php foreach ($items as $item): ?>
-                            <div class="menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm cursor-pointer h-36 <?php echo $bgColorClass; ?>" data-id="<?php echo $item['id_menu']; ?>" data-nama="<?php echo htmlspecialchars($item['nama_menu']); ?>" data-harga="<?php echo $item['harga']; ?>">
-                                <div class="flex-grow">
-                                    <h3 class="font-bold text-gray-800"><?php echo htmlspecialchars($item['nama_menu']); ?></h3>
-                                    <p class="text-sm text-gray-700 font-medium">Rp<?php echo number_format($item['harga'], 0, ',', '.'); ?></p>
-                                </div>
-                                <div class="flex items-center justify-center gap-[10px] mt-4">
-                                    <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">-</button>
-                                    <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center" value="0" min="0">
-                                    <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">+</button>
-                                </div>
+                    <?php while ($item = $menu->fetch_assoc()) : 
+                        $bgClass = '';
+                        switch ($item['nama_kategori']) {
+                            case 'Sarapan':
+                                $bgClass = 'bg-[#C8F6BC]';
+                                break;
+                            case 'Hidangan Utama':
+                                $bgClass = 'bg-[#FFD27E]';
+                                break;
+                            case 'Minuman':
+                                $bgClass = 'bg-[#A2F9FF]';
+                                break;
+                            case 'Penutup':
+                                $bgClass = 'bg-[#FEC0FF]';
+                                break;
+                            default:
+                                $bgClass = 'bg-gray-200';
+                        }
+                    ?>
+                        <div class="menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm cursor-pointer h-36 <?= $bgClass ?>"
+                            data-id="<?= $item['id_menu'] ?>" 
+                            data-nama="<?= $item['nama'] ?>" 
+                            data-harga="<?= $item['harga'] ?>">
+                            
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-gray-800"><?= $item['nama'] ?></h3>
+                                <p class="text-sm text-gray-700 font-medium">Rp<?= number_format($item['harga'], 0, ',', '.') ?></p>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endforeach; ?>
+
+                            <div class="flex items-center justify-center gap-[10px] mt-4">
+                                <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow cursor-pointer">-</button>
+                                    <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center" value="0" min="0">
+                                <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow cursor-pointer">+</button>
+                            </div>
+                        </div>
+                    <?php endwhile; ?>
                 </div>
+
             </div>
 
             <!-- Kolom Kanan: Order Summary -->
             <div class="w-[35%] flex justify-center items-start pt-10">
                 <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col w-full max-w-sm" style="max-height: 70vh;">
-                    <div class="relative inline-block justify-center items-center pb-4 mx-auto">
-                         <button id="order-button" class="bg-gray-100 border border-gray-300 rounded-md px-4 py-2 flex items-center gap-2">
-                            <span id="order-name" class="font-semibold text-gray-700">Order 1</span>
-                            <i data-feather="chevron-down" class="w-4 h-4 text-gray-600"></i>
-                        </button>
-                        <div id="order-dropdown" class="hidden absolute top-full bg-gray-50 min-w-[160px] shadow-lg z-10 rounded-lg">
-                            <a href="#" data-name="Budi" class="text-black px-4 py-3 block hover:bg-gray-100">Budi</a>
-                            <a href="#" data-name="Ani" class="text-black px-4 py-3 block hover:bg-gray-100">Ani</a>
-                            <a href="#" data-name="Joko" class="text-black px-4 py-3 block hover:bg-gray-100">Joko</a>
+                    <form action="" method="GET" class="w-full flex flex-col">
+                        <div class="relative inline-block justify-center items-center pb-4 mx-auto">
+                            <label for="meja" class="block font-semibold mb-2">Pilih Meja</label>
+                            <select name="meja" id="meja" class="w-full p-2 mb-4 border rounded" onchange="this.form.submit()" required>
+                                <option value="">-- Pilih Meja --</option>
+                                <?php
+                                $counter11 = 1;
+                                while ($row = $mejaReserved->fetch_assoc()) :
+                                    if ($row['nomor'] == 11) {
+                                        $label = '11-' . $counter11;
+                                        $counter11++;
+                                    } else {
+                                        $label = $row['nomor'];
+                                    }
+                                    $selected = isset($_GET['meja']) && $_GET['meja'] == $row['nomor'] ? 'selected' : '';
+                                ?>
+                                    <option value="<?= $row['nomor'] ?>" <?= $selected ?>>Meja <?= $label ?></option>
+                                <?php endwhile; ?>
+                            </select>
                         </div>
-                    </div>
-                    <span id="customer-name" class="text-lg font-bold text-gray-800 text-center mb-4">Budi</span>
-                    <div id="order-list" class="flex-grow overflow-y-auto py-4 space-y-4 pr-2"></div>
-                    <div class="mt-auto pt-4 border-t border-gray-200">
-                        <button class="w-full bg-blue-700 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition-colors shadow-md">Konfirmasi</button>
-                    </div>
+
+                        <?php if ($pesananNama) : ?>
+                            <span id="customer-name" class="text-lg font-bold text-gray-800 text-center mb-4">
+                                Atas Nama: <?= htmlspecialchars($pesananNama) ?>
+                            </span>
+                        <?php endif; ?>
+
+                        <div id="order-list" class="flex-grow overflow-y-auto py-4 space-y-4 pr-2"></div>
+                        
+                        <div id="order-summary" class="mt-8 border-t pt-4">
+                            <h2 class="text-xl font-bold mb-2">Order Summary</h2>
+                            <div id="summary-items" class="space-y-2"></div>
+                        </div>
+                        
+                        <div class="mt-auto pt-4 border-t border-gray-200">
+                            <button type="button" class="konfirmasi-btn bg-blue-700 text-white py-3 rounded-lg w-full">Konfirmasi</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        feather.replace();
-        document.addEventListener('DOMContentLoaded', function () {
-            const orderList = document.getElementById('order-list');
-            const order = {};
+        document.addEventListener("DOMContentLoaded", function () {
+            // Ambil semua tombol plus dan minus
+            const plusButtons = document.querySelectorAll(".quantity-btn.plus");
+            const minusButtons = document.querySelectorAll(".quantity-btn.minus");
+            const menuItems = document.querySelectorAll(".menu-item");
+            const summaryContainer = document.getElementById("summary-items");
 
-            const orderButton = document.getElementById('order-button');
-            const orderDropdown = document.getElementById('order-dropdown');
-            const customerName = document.getElementById('customer-name');
-
-            orderButton.addEventListener('click', function(e) {
-                e.stopPropagation();
-                orderDropdown.classList.toggle('hidden');
+            // Event untuk tambah jumlah
+            plusButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const input = this.parentElement.querySelector(".quantity");
+                    input.value = parseInt(input.value) + 1;
+                });
             });
 
-            orderDropdown.addEventListener('click', function(e) {
-                e.preventDefault();
-                if (e.target.tagName === 'A') {
-                    const newName = e.target.dataset.name;
-                    customerName.textContent = newName;
-                    orderDropdown.classList.add('hidden');
-                }
+            // Event untuk kurangi jumlah
+            minusButtons.forEach(button => {
+                button.addEventListener("click", function () {
+                    const input = this.parentElement.querySelector(".quantity");
+                    const current = parseInt(input.value);
+                    if (current > 0) {
+                        input.value = current - 1;
+                    }
+                });
             });
 
-            window.addEventListener('click', function(e) {
-                if (!orderButton.contains(e.target)) {
-                    orderDropdown.classList.add('hidden');
-                }
-            });
+            function updateSummary() {
+                summaryContainer.innerHTML = ""; // Reset
 
-            function renderOrder() {
-                orderList.innerHTML = '';
-                let itemNumber = 1;
-                for (const id in order) {
-                    const item = order[id];
-                    const itemTotal = item.harga * item.qty;
-                    const div = document.createElement('div');
-                    div.classList.add('flex', 'items-center', 'gap-3', 'p-3', 'rounded-lg', 'border', 'border-gray-200', 'shadow-sm');
-                    div.innerHTML = `
-                        <div class="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold text-sm">${itemNumber++}</div>
-                        <div class="flex-grow">
-                            <p class="font-semibold text-gray-800">${item.nama} <span class="text-gray-500 font-medium text-sm">x${item.qty}</span></p>
-                            <p class="text-sm text-gray-700 font-bold">Rp${itemTotal.toLocaleString('id-ID')}</p>
-                        </div>
-                        <button class="text-red-500 hover:text-red-700 remove-item" data-id="${id}">
-                            <i data-feather="trash-2" class="w-5 h-5"></i>
-                        </button>`;
-                    orderList.appendChild(div);
-                }
-                feather.replace();
+                menuItems.forEach(item => {
+                    const qtyInput = item.querySelector(".quantity");
+                    const qty = parseInt(qtyInput.value);
+                    if (qty < 0 || isNaN(qty)) return;
+                    if (qty > 0) {
+                        const name = item.dataset.nama;
+                        const harga = parseInt(item.dataset.harga);
+                        const total = harga * qty;
+
+                        const summaryItem = document.createElement("div");
+                        summaryItem.classList.add("flex", "justify-between", "items-center", "bg-gray-100", "p-2", "rounded");
+
+                        summaryItem.innerHTML = `
+                            <span>${name} x ${qty}</span>
+                            <span>Rp${total.toLocaleString("id-ID")}</span>
+                        `;
+
+                        summaryContainer.appendChild(summaryItem);
+                    }
+                });
             }
 
-            document.querySelectorAll('.quantity-btn').forEach(button => {
-                button.addEventListener('click', function (e) {
-                    e.stopPropagation();
-                    const menuItemDiv = this.closest('.menu-item');
-                    const quantityInput = menuItemDiv.querySelector('.quantity');
-                    let quantity = parseInt(quantityInput.value || '0');
-                    if (this.classList.contains('plus')) {
-                        quantity++;
-                    } else if (this.classList.contains('minus') && quantity > 0) {
-                        quantity--;
-                    }
-                    quantityInput.value = quantity;
-                    updateOrder(menuItemDiv, quantity);
-                });
+            // Saat klik tombol + atau -
+            document.querySelectorAll(".quantity-btn").forEach(btn => {
+                btn.addEventListener("click", updateSummary);
             });
 
-            document.querySelectorAll('.quantity').forEach(input => {
-                input.addEventListener('focus', function(e) {
-                    if (this.value === '0') {
-                        this.value = '';
-                    }
-                });
+            // Saat quantity diubah manual
+            document.querySelectorAll(".quantity").forEach(input => {
+                input.addEventListener("input", updateSummary);
+            });
+        });
 
-                input.addEventListener('input', function(e) {
-                    const menuItemDiv = this.closest('.menu-item');
-                    let quantity = parseInt(this.value || '0');
-                     if (quantity < 0) {
-                        quantity = 0;
-                    }
-                    updateOrder(menuItemDiv, quantity);
-                });
+        document.querySelector("button.konfirmasi-btn").addEventListener("click", () => {
+            const nomorMeja = document.querySelector("select[name='meja']").value;
+            const pesanan = [];
 
-                input.addEventListener('blur', function(e) {
-                    const menuItemDiv = this.closest('.menu-item');
-                    if (this.value === '' || parseInt(this.value) < 0) {
-                        this.value = '0';
-                        updateOrder(menuItemDiv, 0);
-                    }
-                });
+            document.querySelectorAll(".menu-item").forEach(item => {
+                const jumlah = parseInt(item.querySelector(".quantity").value);
+                if (jumlah > 0) {
+                    pesanan.push({
+                        id_menu: parseInt(item.dataset.id),
+                        jumlah: jumlah
+                    });
+                }
             });
 
-            function updateOrder(menuItemDiv, quantity) {
-                const id = menuItemDiv.dataset.id;
-                if (quantity > 0) {
-                    order[id] = { nama: menuItemDiv.dataset.nama, harga: parseFloat(menuItemDiv.dataset.harga), qty: quantity };
+            if (pesanan.length === 0) {
+                alert("Tidak ada pesanan yang dipilih!");
+                return;
+            }
+
+            fetch("../src/pesananDb.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan: pesanan }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Pesanan berhasil dikonfirmasi!");
+                    window.location.reload();
                 } else {
-                    delete order[id];
-                }
-                renderOrder();
-            }
-
-            orderList.addEventListener('click', function(e) {
-                const removeButton = e.target.closest('.remove-item');
-                if (removeButton) {
-                    const id = removeButton.dataset.id;
-                    delete order[id];
-                    const menuItemDiv = document.querySelector(`.menu-item[data-id='${id}']`);
-                    if(menuItemDiv) {
-                        menuItemDiv.querySelector('.quantity').value = '0';
-                    }
-                    renderOrder();
+                    alert("Gagal menyimpan pesanan: " + data.message);
                 }
             });
         });
