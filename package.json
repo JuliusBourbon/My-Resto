@@ -16,5 +16,8 @@
     "@tailwindcss/cli": "^4.1.11",
     "concurrently": "^9.2.0",
     "tailwindcss": "^4.1.11"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.4"
   }
 }

@@ -3,35 +3,6 @@
     require('../src/pesananDb.php');
     $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
     
-    // -- Data Statis untuk Frontend --
-
-// 1. Data Kategori Menu (Statis)
-// $kategori_menu = [
-//     ['id_kategori' => 1, 'nama_kategori' => 'Sarapan', 'warna_bg_class' => 'bg-[#C8F6BC]'],
-//     ['id_kategori' => 2, 'nama_kategori' => 'Hidangan Utama', 'warna_bg_class' => 'bg-[#FFD27E]'],
-//     ['id_kategori' => 3, 'nama_kategori' => 'Minuman', 'warna_bg_class' => 'bg-[#A2F9FF]'],
-//     ['id_kategori' => 4, 'nama_kategori' => 'Penutup', 'warna_bg_class' => 'bg-[#FEC0FF]'],
-// ];
-
-// 2. Data Item Menu (Statis)
-$menu_items = [
-    1 => [
-        ['id_menu' => 2, 'nama_menu' => 'Garam dan Madu', 'harga' => 17000, 'id_kategori' => 1],
-        ['id_menu' => 5, 'nama_menu' => 'Bubur Spesial', 'harga' => 19000, 'id_kategori' => 1],
-    ],
-    2 => [
-        ['id_menu' => 1, 'nama_menu' => 'Ikan dan Kentang', 'harga' => 30000, 'id_kategori' => 2],
-        ['id_menu' => 6, 'nama_menu' => 'Nasi Goreng', 'harga' => 22000, 'id_kategori' => 2],
-        ['id_menu' => 7, 'nama_menu' => 'Ayam Chicken', 'harga' => 23000, 'id_kategori' => 2],
-    ],
-    3 => [
-        ['id_menu' => 3, 'nama_menu' => 'Jeruk Hangat', 'harga' => 13000, 'id_kategori' => 3],
-        ['id_menu' => 4, 'nama_menu' => 'Americano', 'harga' => 18000, 'id_kategori' => 3],
-    ],
-    4 => [
-        ['id_menu' => 8, 'nama_menu' => 'Cendol', 'harga' => 18000, 'id_kategori' => 4],
-    ]
-];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -328,7 +299,7 @@ $menu_items = [
                 return;
             }
 
-            fetch("../src/pesananDb.php", {
+            fetch("../src/submitPesanan.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -360,7 +331,7 @@ $menu_items = [
                 // Set kategori yang aktif
                 selectedKategori = kategoriId;
 
-                fetch(`../src/pesananDb.php?kategori_id=${kategoriId}`)
+                fetch(`../src/menuFiltered.php?kategori_id=${kategoriId}`)
                     .then(res => res.json())
                     .then(data => {
                         const container = document.querySelector('#menu-container');
@@ -404,7 +375,7 @@ $menu_items = [
 
         // Fungsi untuk ambil semua menu (tanpa filter)
         function fetchAllMenu() {
-            fetch(`../src/pesananDb.php`) // tidak kirim kategori_id
+            fetch(`../src/menuFiltered.php`) // tidak kirim kategori_id
                 .then(res => res.json())
                 .then(data => {
                     updateMenuContainer(data);

@@ -27,60 +27,24 @@
             }
         }
     }
+    // $menus = [];
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $data = json_decode(file_get_contents("php://input"), true);
+    // if (isset($_GET['kategori_id'])) {
+    //     $kategoriId = intval($_GET['kategori_id']);
+    //     $result = $conn->query("SELECT m.*, k.nama_kategori 
+    //                             FROM menu m 
+    //                             JOIN kategori_menu k ON m.id_kategori = k.id_kategori 
+    //                             WHERE m.id_kategori = $kategoriId");
+    // } else {
+    //     // tampilkan semua
+    //     $result = $conn->query("SELECT m.*, k.nama_kategori 
+    //                             FROM menu m 
+    //                             JOIN kategori_menu k ON m.id_kategori = k.id_kategori");
+    // }
 
-        $nomor_meja = $data['nomor_meja'];
-        $items = $data['pesanan'];
+    // while ($row = $result->fetch_assoc()) {
+    //     $menus[] = $row;
+    // }
 
-        // Dapatkan id_pesanan aktif berdasarkan nomor meja
-        $query = $conn->prepare("SELECT p.id_pesanan FROM pesanan p
-                                JOIN meja m ON p.id_meja = m.id_meja
-                                WHERE m.nomor = ? AND p.status = 'Reservasi'
-                                ORDER BY p.waktu_pesan DESC LIMIT 1");
-        $query->bind_param("i", $nomor_meja);
-        $query->execute();
-        $result = $query->get_result();
-
-        if ($row = $result->fetch_assoc()) {
-            $id_pesanan = $row['id_pesanan'];
-
-            $stmt = $conn->prepare("INSERT INTO detail_transaksi (id_pesanan, id_menu, jumlah, status) VALUES (?, ?, ?, 'dipesan')");
-
-            foreach ($items as $item) {
-                $id_menu = $item['id_menu'];
-                $jumlah = $item['jumlah'];
-                if ($jumlah > 0) {
-                    $stmt->bind_param("iii", $id_pesanan, $id_menu, $jumlah);
-                    $stmt->execute();
-                }
-            }
-
-            echo json_encode(["success" => true]);
-        } else {
-            echo json_encode(["success" => false, "message" => "Pesanan tidak ditemukan"]);
-        }
-    }
-
-    $menus = [];
-
-    if (isset($_GET['kategori_id'])) {
-        $kategoriId = intval($_GET['kategori_id']);
-        $result = $conn->query("SELECT m.*, k.nama_kategori 
-                                FROM menu m 
-                                JOIN kategori_menu k ON m.id_kategori = k.id_kategori 
-                                WHERE m.id_kategori = $kategoriId");
-    } else {
-        // tampilkan semua
-        $result = $conn->query("SELECT m.*, k.nama_kategori 
-                                FROM menu m 
-                                JOIN kategori_menu k ON m.id_kategori = k.id_kategori");
-    }
-
-    while ($row = $result->fetch_assoc()) {
-        $menus[] = $row;
-    }
-
-    echo json_encode($menus);
+    // echo json_encode($menus);
 ?>
