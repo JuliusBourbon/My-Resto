@@ -1,0 +1,17 @@
+# Abaikan folder node_modules
+node_modules/
+
+# Abaikan file log
+*.log
+
+# Abaikan file lingkungan lokal
+.env
+
+# Abaikan cache dari npm/yarn
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Abaikan sistem file tertentu
+.DS_Store
+Thumbs.db
