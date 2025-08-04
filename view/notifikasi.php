@@ -1,5 +1,6 @@
 <?php
     $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
+    require('../src/notifikasidb.php')
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
-    <div class="flex flex-col">
+    <div id="main" class="flex flex-col">
         <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
             <div class="relative flex items-center justify-center px-10 py-4">
                 <div class="absolute left-10 top-1/2 -translate-y-1/2">
@@ -56,34 +57,108 @@
                 
                 <!-- Pending Section -->
                 <div id="pendingSection" class="flex p-8 justify-center">
-                    <div class="border-2 border-gray-300 rounded-md px-5 py-4 flex items-center justify-between w-full">
-                        <div class="flex justify-between gap-4 items-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022
-                            c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" />
-                        </svg>
-                        <h1 class="text-2xl font-semibold">Order 5 Siap disajikan</h1>
-                    </div>
-                    <div class="flex rounded-md">
-                        <input type="button" value="X"
-                        class="border border-gray-500 bg-red-300 text-black px-10 py-2 rounded-l-md cursor-pointer hover:bg-red-500 transition">
-                        <input type="button" value="✓" id=""
-                        class="border border-gray-500 bg-green-300 text-black px-10 py-2 rounded-r-md cursor-pointer hover:bg-green-500 transition">
-                    </div>
+                    <table class="w-full text-center m-10">
+                        <thead>
+                            <tr>
+                                <th class="py-2">No</th>
+                                <th class="py-2">Meja</th>
+                                <th class="py-2">Nama</th>
+                                <th class="py-2">Pesanan</th>
+                                <th class="py-2">Status</th>
+                                <th class="py-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php $no = 1; ?>
+                            <?php while ($row = $query->fetch_assoc()) : ?>
+                                <tr>
+                                    <td class="border py-2"><?= $no++ ?></td>
+                                    <?php
+                                        $counter = 1;
+                                        if ($row['nomor_meja'] == 11) {
+                                            $label = '11-' . $counter++;
+                                        } else {
+                                            $label = $row['nomor_meja'];
+                                        }
+                                    ?>
+                                    <td class="border py-2"><?= 'Meja ' . $label ?></td>
+                                    <td class="border py-2"><?= htmlspecialchars($row['nama_pelanggan']) ?></td>
+                                    <td class="border py-2">
+                                        <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border rounded-sm w-1/2 bg-gray-300 hover:bg-gray-400 transition" id="Reservasi">Detail</button>
+                                    </td>
+                                    <?php
+                                        $status = $row['status'];
+                                        $statusColor = match ($status) {
+                                            'Reservasi' => 'text-yellow-500',
+                                            'Selesai' => 'text-green-500',
+                                            default => 'text-gray-800'
+                                        };
+                                    ?>
+                                    <td class="border py-2">
+                                        <span class="px-3 py-1 rounded-full text-sm font-semibold <?= $statusColor ?>">
+                                            <?= $status ?>
+                                        </span>
+                                    </td>
+                                    <td class="border py-2">
+                                        <div class="flex rounded-md justify-center">
+                                            <input type="button" value="X" class="border border-gray-500 bg-red-400 text-black px-10 py-2 rounded-l-md cursor-pointer hover:bg-red-500 transition">
+                                            <input type="button" value="✓" class="border border-gray-500 bg-green-400 text-black px-10 py-2 rounded-r-md cursor-pointer hover:bg-green-500 transition">
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+
+                </div>
+                <div id="confirmedSection" class="flex p-8 justify-center hidden">
+                    <table class="w-full text-center m-10">
+                        <thead>
+                            <tr class="">
+                                <th class="py-2">No</th>
+                                <th class="py-2">Meja</th>
+                                <th class="py-2">Nama</th>
+                                <th class="py-2">Pesanan</th>
+                                <th class="py-2">Status</th>
+                                <th class="py-2">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border py-2">1</td>
+                                <td class="border py-2">Meja 1</td>
+                                <td class="border py-2">Tes</td>
+                                <td class="border py-2"><input type="button" value="Detail" class="border rounded-sm w-1/2 bg-gray-300"></td>
+                                <td class="border py-2">SSS</td>
+                                <td class="border py-2">
+                                    <div class="flex rounded-md justify-center">
+                                        <input type="button" value="X" class="border border-gray-500 bg-red-400 text-black px-10 py-2 rounded-l-md cursor-pointer hover:bg-red-500 transition">
+                                        <input type="button" value="✓" id="" class="border border-gray-500 bg-green-400 text-black px-10 py-2 rounded-r-md cursor-pointer hover:bg-green-500 transition">
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             
             <!-- Confirmed Section -->
-            <div id="confirmedSection" class="hidden p-8 justify-center">
-                <div class="border-2 border-green-400 rounded-md px-5 py-4 w-full text-center">
-                    <h1 class="text-2xl font-semibold text-green-600">Order 5 telah dikonfirmasi ✅</h1>
-                </div>
-            </div>
         </div>
     </div>
-</div>
+
+    <div id="reservasiModal" class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center h-screen hidden">
+        <div class="bg-white w-1/3 rounded-lg shadow-lg p-6 relative">
+            <button id="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-black text-2xl font-bold">&times;</button>
+            <h2 class="text-xl font-semibold mb-4">Detail Menu Pesanan</h2>
+            <ul id="menuList" class="list-disc text-left w-full px-6 text-gray-700 space-y-1">
+                <!-- Diisi via JS -->
+            </ul>
+        </div>
+    </div>
+
+<script>
+    const detailPesananData = <?= json_encode($semuaDetailPesanan) ?>;
+</script>
 <script src="../script/notifikasi.js"></script>
 </body>
 </html>
