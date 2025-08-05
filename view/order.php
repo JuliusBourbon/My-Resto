@@ -144,7 +144,7 @@
 
             <!-- Kolom Kanan: Order Summary -->
             <div class="w-[35%] flex justify-center items-start pt-10">
-                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col w-full max-w-sm" style="max-height: 70vh;">
+                <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col w-full max-w-sm">
                     <form action="" method="GET" class="w-full flex flex-col">
                         <div class="relative inline-block justify-center items-center pb-4 mx-auto">
                             <label for="meja" class="block font-semibold mb-2">Pilih Meja</label>
@@ -172,10 +172,7 @@
                             </span>
                         <?php endif; ?>
 
-                        <div id="order-list" class="flex-grow overflow-y-auto py-4 space-y-4 pr-2"></div>
-                        
-                        <div id="order-summary" class="mt-8 border-t pt-4">
-                            <h2 class="text-xl font-bold mb-2">Order Summary</h2>
+                        <div id="order-summary" class="mt-4 border-b pt-4">
                             <div id="summary-items" class="space-y-2"></div>
                         </div>
 
@@ -194,200 +191,90 @@
     </div>
 
     <script>
+        let selectedQuantities = {}; 
+        let allMenuItems = {}; 
         let selectedKategori = null;
 
         function updateOrderSummary() {
             const orderSummary = document.getElementById("order-summary");
             const totalHargaEl = document.getElementById("total-harga");
-            orderSummary.innerHTML = ""; // reset
+            orderSummary.innerHTML = ""; 
 
             let totalHarga = 0;
 
-            document.querySelectorAll(".menu-item").forEach(item => {
-                const nama = item.dataset.nama;
-                const harga = parseInt(item.dataset.harga);
-                const jumlah = parseInt(item.querySelector(".quantity").value);
+            for (const menuId in selectedQuantities) {
+                const jumlah = selectedQuantities[menuId];
 
                 if (jumlah > 0) {
-                    const subtotal = harga * jumlah;
+                    const menuItem = allMenuItems[menuId];
+                    if (!menuItem) continue;
+
+                    const subtotal = menuItem.harga * jumlah;
                     totalHarga += subtotal;
 
                     const row = document.createElement("div");
-                    row.classList.add("flex", "justify-between", "items-center");
+                    row.classList.add("flex", "justify-between", "items-center", "py-1");
 
                     row.innerHTML = `
-                        <span>${nama} x ${jumlah}</span>
+                        <span>${menuItem.nama} x ${jumlah}</span>
                         <span>Rp${subtotal.toLocaleString('id-ID')}</span>
                     `;
-
                     orderSummary.appendChild(row);
                 }
-            });
+            }
 
             totalHargaEl.textContent = `Rp${totalHarga.toLocaleString('id-ID')}`;
         }
 
-        // Fungsi untuk plus-minus dan update Order Summary
         function bindQuantityButtons() {
-            document.querySelectorAll(".quantity").forEach(input => {
-                input.addEventListener("input", updateOrderSummary);
-            });
-
             document.querySelectorAll(".quantity-btn.plus").forEach(btn => {
                 btn.addEventListener("click", () => {
                     const input = btn.parentElement.querySelector(".quantity");
+                    const id = btn.closest(".menu-item").dataset.id_menu;
+                    
                     input.value = parseInt(input.value) + 1;
-                    updateOrderSummary();
+                    selectedQuantities[id] = parseInt(input.value); 
+                    updateOrderSummary(); 
                 });
             });
 
             document.querySelectorAll(".quantity-btn.minus").forEach(btn => {
                 btn.addEventListener("click", () => {
                     const input = btn.parentElement.querySelector(".quantity");
-                    input.value = Math.max(0, parseInt(input.value) - 1);
-                    updateOrderSummary();
+                    const id = btn.closest(".menu-item").dataset.id_menu;
+                    const currentValue = parseInt(input.value);
+
+                    if (currentValue > 0) {
+                        input.value = currentValue - 1;
+                        selectedQuantities[id] = parseInt(input.value); 
+                        updateOrderSummary(); 
+                    }
                 });
             });
-        }
-        
-        document.addEventListener("DOMContentLoaded", function () {
-            // Ambil semua tombol plus dan minus
-            const plusButtons = document.querySelectorAll(".quantity-btn.plus");
-            const minusButtons = document.querySelectorAll(".quantity-btn.minus");
-            const menuItems = document.querySelectorAll(".menu-item");
-            const summaryContainer = document.getElementById("summary-items");
 
             document.querySelectorAll(".quantity").forEach(input => {
-                input.addEventListener("input", updateOrderSummary);
-            });
-
-            document.querySelectorAll(".quantity-btn.plus").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const input = btn.parentElement.querySelector(".quantity");
-                    input.value = parseInt(input.value) + 1;
-                    updateOrderSummary();
+                input.addEventListener("input", () => {
+                    const id = input.closest(".menu-item").dataset.id_menu;
+                    const value = Math.max(0, parseInt(input.value) || 0);
+                    input.value = value;
+                    selectedQuantities[id] = value; 
+                    updateOrderSummary(); 
                 });
             });
-
-            document.querySelectorAll(".quantity-btn.minus").forEach(btn => {
-                btn.addEventListener("click", () => {
-                    const input = btn.parentElement.querySelector(".quantity");
-                    input.value = Math.max(0, parseInt(input.value) - 1);
-                    updateOrderSummary();
-                });
-            });
-
-            
-        });
-
-        document.querySelector("button.konfirmasi-btn").addEventListener("click", () => {
-            const nomorMeja = document.querySelector("select[name='meja']").value;
-            const pesanan = [];
-
-            document.querySelectorAll(".menu-item").forEach(item => {
-                const jumlah = parseInt(item.querySelector(".quantity").value);
-                if (jumlah > 0) {
-                    pesanan.push({
-                        id_menu: parseInt(item.dataset.id),
-                        jumlah: jumlah
-                    });
-                }
-            });
-
-            if (pesanan.length === 0) {
-                alert("Tidak ada pesanan yang dipilih!");
-                return;
-            }
-
-            fetch("../src/submitPesanan.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan: pesanan }),
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    alert("Pesanan berhasil dikonfirmasi!");
-                    window.location.reload();
-                } else {
-                    alert("Gagal menyimpan pesanan: " + data.message);
-                }
-            });
-        });
-
-        document.querySelectorAll('.kategori-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const kategoriId = this.dataset.kategori;
-
-                // Jika kategori yang sama diklik lagi, reset
-                if (selectedKategori === kategoriId) {
-                    selectedKategori = null;
-                    fetchAllMenu(); // ambil semua menu
-                    return;
-                }
-
-                // Set kategori yang aktif
-                selectedKategori = kategoriId;
-
-                fetch(`../src/menuFiltered.php?kategori_id=${kategoriId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        const container = document.querySelector('#menu-container');
-                        container.innerHTML = ''; // kosongkan menu lama
-
-                        data.forEach(item => {
-                            let bg = '';
-                            switch (item.nama_kategori) {
-                                case 'Sarapan': bg = 'bg-[#C8F6BC]'; break;
-                                case 'Hidangan Utama': bg = 'bg-[#FFD27E]'; break;
-                                case 'Minuman': bg = 'bg-[#A2F9FF]'; break;
-                                case 'Penutup': bg = 'bg-[#FEC0FF]'; break;
-                                default: bg = 'bg-gray-200';
-                            }
-
-                            const el = document.createElement('div');
-                            el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm cursor-pointer h-36 ${bg}`;
-                            el.dataset.id = item.id_menu;
-                            el.dataset.nama = item.nama;
-                            el.dataset.harga = item.harga;
-
-                            el.innerHTML = `
-                                <div class="flex-grow">
-                                    <h3 class="font-bold text-gray-800">${item.nama}</h3>
-                                    <p class="text-sm text-gray-700 font-medium">Rp${parseInt(item.harga).toLocaleString('id-ID')}</p>
-                                </div>
-                                <div class="flex items-center justify-center gap-[10px] mt-4">
-                                    <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">-</button>
-                                    <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center" value="0" min="0">
-                                    <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">+</button>
-                                </div>
-                            `;
-
-                            container.appendChild(el);
-                        });
-
-                        bindQuantityButtons(); // agar tombol plus/minus berfungsi
-                    });
-            });
-        });
-
-        // Fungsi untuk ambil semua menu (tanpa filter)
-        function fetchAllMenu() {
-            fetch(`../src/menuFiltered.php`) // tidak kirim kategori_id
-                .then(res => res.json())
-                .then(data => {
-                    updateMenuContainer(data);
-                });
         }
 
-        // Fungsi render menu
         function updateMenuContainer(data) {
             const container = document.querySelector('#menu-container');
-            container.innerHTML = '';
+            container.innerHTML = ''; 
 
             data.forEach(item => {
+                if (!allMenuItems[item.id_menu]) {
+                    allMenuItems[item.id_menu] = {
+                        nama: item.nama,
+                        harga: parseInt(item.harga)
+                    };
+                }
+
                 let bg = '';
                 switch (item.nama_kategori) {
                     case 'Sarapan': bg = 'bg-[#C8F6BC]'; break;
@@ -398,10 +285,9 @@
                 }
 
                 const el = document.createElement('div');
-                el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm cursor-pointer h-36 ${bg}`;
-                el.dataset.id = item.id_menu;
-                el.dataset.nama = item.nama;
-                el.dataset.harga = item.harga;
+                el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm h-36 ${bg}`;
+                el.dataset.id_menu = item.id_menu;
+                const currentQuantity = selectedQuantities[item.id_menu] || 0;
 
                 el.innerHTML = `
                     <div class="flex-grow">
@@ -410,18 +296,94 @@
                     </div>
                     <div class="flex items-center justify-center gap-[10px] mt-4">
                         <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">-</button>
-                        <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center" value="0" min="0">
+                        <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center"
+                            value="${currentQuantity}" min="0">
                         <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">+</button>
                     </div>
                 `;
-
                 container.appendChild(el);
             });
 
             bindQuantityButtons();
         }
 
-        
+        function fetchMenu(kategoriId = null) {
+            let url = '../src/menuFiltered.php';
+            if (kategoriId) {
+                url += `?kategori_id=${kategoriId}`;
+            }
+
+            fetch(url)
+                .then(res => res.json())
+                .then(data => {
+                    updateMenuContainer(data);
+                });
+        }
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('../src/menuFiltered.php')
+                .then(res => res.json())
+                .then(data => {
+                    data.forEach(item => {
+                        allMenuItems[item.id_menu] = {
+                            nama: item.nama,
+                            harga: parseInt(item.harga)
+                        };
+                    });
+                    updateMenuContainer(data);
+                    updateOrderSummary(); 
+                });
+
+            document.querySelectorAll('.kategori-btn').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const kategoriId = this.dataset.kategori;
+
+                    if (selectedKategori === kategoriId) {
+                        selectedKategori = null;
+                        fetchMenu(); 
+                    } else {
+                        selectedKategori = kategoriId;
+                        fetchMenu(kategoriId); 
+                    }
+                });
+            });
+
+            document.querySelector("button.konfirmasi-btn").addEventListener("click", () => {
+                const nomorMeja = document.querySelector("select[name='meja']").value;
+                const pesanan = [];
+
+                for (const menuId in selectedQuantities) {
+                    const jumlah = selectedQuantities[menuId];
+                    if (jumlah > 0) {
+                        pesanan.push({
+                            id_menu: parseInt(menuId),
+                            jumlah: jumlah
+                        });
+                    }
+                }
+
+                if (pesanan.length === 0) {
+                    alert("Tidak ada pesanan yang dipilih!");
+                    return;
+                }
+
+                fetch("../src/submitPesanan.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan: pesanan }),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Pesanan berhasil dikonfirmasi!");
+                        window.location.reload();
+                    } else {
+                        alert("Gagal menyimpan pesanan: " + data.message);
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
