@@ -27,24 +27,4 @@
             }
         }
     }
-    // $menus = [];
-
-    // if (isset($_GET['kategori_id'])) {
-    //     $kategoriId = intval($_GET['kategori_id']);
-    //     $result = $conn->query("SELECT m.*, k.nama_kategori 
-    //                             FROM menu m 
-    //                             JOIN kategori_menu k ON m.id_kategori = k.id_kategori 
-    //                             WHERE m.id_kategori = $kategoriId");
-    // } else {
-    //     // tampilkan semua
-    //     $result = $conn->query("SELECT m.*, k.nama_kategori 
-    //                             FROM menu m 
-    //                             JOIN kategori_menu k ON m.id_kategori = k.id_kategori");
-    // }
-
-    // while ($row = $result->fetch_assoc()) {
-    //     $menus[] = $row;
-    // }
-
-    // echo json_encode($menus);
 ?>
