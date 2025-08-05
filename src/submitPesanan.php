@@ -19,11 +19,10 @@
         exit;
     }
 
-    // Cek id_pesanan aktif berdasarkan nomor meja dan status 'Reservasi'
     $queryPesanan = $conn->prepare("SELECT p.id_pesanan FROM pesanan p
-                                    JOIN meja m ON p.id_meja = m.id_meja
-                                    WHERE m.nomor = ? AND p.status = 'Reservasi'
-                                    ORDER BY p.waktu_pesan DESC LIMIT 1");
+                                JOIN meja m ON p.id_meja = m.id_meja
+                                WHERE m.nomor = ? AND p.status != 'Selesai'
+                                ORDER BY p.waktu_pesan DESC LIMIT 1");
     $queryPesanan->bind_param("i", $nomor_meja);
     $queryPesanan->execute();
     $resultPesanan = $queryPesanan->get_result();
@@ -83,7 +82,7 @@
             $stmtCekPembayaran->close();
 
             // 4. (Saran) Update status pesanan agar tidak 'Reservasi' lagi
-            $stmtUpdateStatus = $conn->prepare("UPDATE pesanan SET status = 'Aktif' WHERE id_pesanan = ?");
+            $stmtUpdateStatus = $conn->prepare("UPDATE pesanan SET status = 'Pending' WHERE id_pesanan = ?");
             $stmtUpdateStatus->bind_param("i", $id_pesanan);
             $stmtUpdateStatus->execute();
             $stmtUpdateStatus->close();

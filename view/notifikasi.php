@@ -1,6 +1,10 @@
 <?php
-    $currentPage = basename($_SERVER['PHP_SELF']); // ambil nama file saat ini
-    require('../src/notifikasidb.php')
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        require('../src/notifikasiPost.php');
+        exit;
+    }
+    require('../src/notifikasidb.php');
+    $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,8 +22,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100">
-    <div id="main" class="flex flex-col">
+<body class="bg-gray-100 pt-[118px]">
+    <div id="main" class="flex flex-col min-h-screen">
         <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
             <div class="relative flex items-center justify-center px-10 py-4">
                 <div class="absolute left-10 top-1/2 -translate-y-1/2">
@@ -47,119 +51,126 @@
             </div>
         </nav>
         
-        <div class="flex items-center justify-center h-screen">
-            <div class="w-10/12 bg-white shadow-md rounded-lg mt-20">
-                <!-- Header Tabs -->
-                <div class="flex items-center justify-between overflow-hidden">
-                    <button id="pendingTab" class="text-xl bg-blue-400 w-1/2 text-center py-2 rounded-tl-lg font-semibold text-gray-800">Pending</button>
-                    <button id="confirmBtn" class="text-xl bg-blue-300 w-1/2 text-center py-2 rounded-tr-lg font-semibold text-gray-600">Terkonfirmasi</button>
+        <main class="flex items-start justify-center mt-12 mb-12">
+            <div class="w-10/12 bg-white shadow-md rounded-lg">
+                <div class="flex border-b border-gray-200">
+                    <button id="pendingTab" class="tab-button w-1/2 py-3 text-xl font-semibold border-b-4 border-blue-500 text-blue-600 bg-blue-50">Pending</button>
+                    <button id="confirmedTab" class="tab-button w-1/2 py-3 text-xl font-semibold border-b-4 border-transparent text-gray-500">Terkonfirmasi</button>
                 </div>
                 
-                <!-- Pending Section -->
-                <div id="pendingSection" class="flex p-8 justify-center">
-                    <table class="w-full text-center m-10">
-                        <thead>
+                <div id="pendingSection" class="tab-content p-6">
+                    <table class="w-full text-center">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <th class="py-2">No</th>
-                                <th class="py-2">Meja</th>
-                                <th class="py-2">Nama</th>
-                                <th class="py-2">Pesanan</th>
-                                <th class="py-2">Status</th>
-                                <th class="py-2">Aksi</th>
+                                <th class="py-3 px-2">Meja</th>
+                                <th class="py-3 px-2">Detail Pesanan</th>
+                                <th class="py-3 px-2">Waktu</th>
+                                <th class="py-3 px-2">Status</th>
+                                <th class="py-3 px-2">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $no = 1; ?>
-                            <?php while ($row = $query->fetch_assoc()) : ?>
-                                <tr>
-                                    <td class="border py-2"><?= $no++ ?></td>
-                                    <?php
-                                        $counter = 1;
-                                        if ($row['nomor_meja'] == 11) {
-                                            $label = '11-' . $counter++;
-                                        } else {
-                                            $label = $row['nomor_meja'];
-                                        }
-                                    ?>
-                                    <td class="border py-2"><?= 'Meja ' . $label ?></td>
-                                    <td class="border py-2"><?= htmlspecialchars($row['nama_pelanggan']) ?></td>
-                                    <td class="border py-2">
-                                        <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border rounded-sm w-1/2 bg-gray-300 hover:bg-gray-400 transition" id="Reservasi">Detail</button>
-                                    </td>
-                                    <?php
-                                        $status = $row['status'];
-                                        $statusColor = match ($status) {
-                                            'Preparing' => 'text-yellow-500',
-                                            'Ready To Serve' => 'text-green-500',
-                                            default => 'text-gray-800'
-                                        };
-                                    ?>
-                                    <td class="border py-2">
-                                        <span class="px-3 py-1 rounded-full text-sm font-semibold <?= $statusColor ?>">
-                                            <?= $status ?>
-                                        </span>
-                                    </td>
-                                    <td class="border py-2">
-                                        <div class="flex rounded-md justify-center">
-                                            <input type="button" value="X" class="border border-gray-500 bg-red-400 text-black px-10 py-2 rounded-l-md cursor-pointer hover:bg-red-500 transition">
-                                            <input type="button" value="✓" class="border border-gray-500 bg-green-400 text-black px-10 py-2 rounded-r-md cursor-pointer hover:bg-green-500 transition">
-                                        </div>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
+                            <?php if (empty($pendingNotifications)): ?>
+                                <tr><td colspan="5" class="py-10 text-gray-500">Tidak ada notifikasi saat ini.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($pendingNotifications as $row) : ?>
+                                    <tr class="border-b">
+                                        <td class="py-3 px-2">Meja <?= $row['nomor_meja'] ?></td>
+                                        <td class="py-3 px-2">
+                                            <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border rounded-md px-4 py-1 bg-gray-200 hover:bg-gray-300 transition">Lihat Detail</button>
+                                        </td>
+                                        <td class="py-3 px-2"><?= date('H:i', strtotime($row['waktu_pesan'])) ?></td>
+                                        <td class="py-3 px-2 font-semibold 
+                                            <?php 
+                                                // Logika pewarnaan status
+                                                if ($row['status'] === 'Canceled') echo 'text-red-600';
+                                                elseif ($row['status'] === 'Ready To Serve') echo 'text-green-600';
+                                                elseif ($row['status'] === 'Preparing') echo 'text-yellow-600';
+                                                else echo 'text-gray-800';
+                                            ?>
+                                        ">
+                                            <?= $row['status'] ?>
+                                        </td>
+                                        <td class="py-3 px-2">
+                                            <div class="flex justify-center items-center gap-2 h-10">
+                                                <?php // --- LOGIKA KONDISIONAL UNTUK TOMBOL AKSI --- ?>
+
+                                                <?php if ($row['status'] === 'Ready To Serve'): ?>
+                                                    <form method="POST" action="notifikasi.php" onsubmit="return confirm('Konfirmasi pesanan telah disajikan?');">
+                                                        <input type="hidden" name="action" value="set_served">
+                                                        <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
+                                                        <button type="submit" class="font-bold text-white bg-green-500 px-4 h-10 rounded-md hover:bg-green-600 transition">Selesai</button>
+                                                    </form>
+                                                <?php elseif ($row['status'] === 'Canceled'): ?>
+                                                    <form method="POST" action="notifikasi.php" onsubmit="return confirm('Batalkan seluruh pesanan dan kosongkan meja?');">
+                                                        <input type="hidden" name="action" value="set_finish_order">
+                                                        <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
+                                                        <button type="submit" class="font-bold text-white bg-red-500 w-10 h-10 rounded-md hover:bg-red-600 transition" title="Batalkan Pesanan">X</button>
+                                                    </form>
+                                                    <form method="POST" action="notifikasi.php" onsubmit="return confirm('Biarkan pelanggan memesan ulang?');">
+                                                        <input type="hidden" name="action" value="set_reorder">
+                                                        <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
+                                                        <button type="submit" class="font-bold text-white bg-blue-500 w-10 h-10 rounded-md hover:bg-blue-600 transition" title="Pesan Ulang">↻</button>
+                                                    </form>
+                                                <?php else: ?>
+                                                    <span class="text-sm text-gray-400">-</span>
+                                                <?php endif; ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
-
                 </div>
-                <div id="confirmedSection" class="flex p-8 justify-center hidden">
-                    <table class="w-full text-center m-10">
-                        <thead>
-                            <tr class="">
-                                <th class="py-2">No</th>
-                                <th class="py-2">Meja</th>
-                                <th class="py-2">Nama</th>
-                                <th class="py-2">Pesanan</th>
-                                <th class="py-2">Status</th>
-                                <th class="py-2">Aksi</th>
+
+                <div id="confirmedSection" class="tab-content p-6 hidden">
+                     <table class="w-full text-center">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="py-3 px-2">Meja</th>
+                                <th class="py-3 px-2">Nama Pelanggan</th>
+                                <th class="py-3 px-2">Detail Pesanan</th>
+                                <th class="py-3 px-2">Waktu Selesai</th>
+                                <th class="py-3 px-2">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="border py-2">1</td>
-                                <td class="border py-2">Meja 1</td>
-                                <td class="border py-2">Tes</td>
-                                <td class="border py-2"><input type="button" value="Detail" class="border rounded-sm w-1/2 bg-gray-300"></td>
-                                <td class="border py-2">SSS</td>
-                                <td class="border py-2">
-                                    <div class="flex rounded-md justify-center">
-                                        <input type="button" value="X" class="border border-gray-500 bg-red-400 text-black px-10 py-2 rounded-l-md cursor-pointer hover:bg-red-500 transition">
-                                        <input type="button" value="✓" id="" class="border border-gray-500 bg-green-400 text-black px-10 py-2 rounded-r-md cursor-pointer hover:bg-green-500 transition">
-                                    </div>
-                                </td>
-                            </tr>
+                            <?php if (empty($finishedOrders)): ?>
+                                <tr><td colspan="5" class="py-10 text-gray-500">Belum ada riwayat pesanan selesai.</td></tr>
+                            <?php else: ?>
+                                <?php foreach ($finishedOrders as $row) : ?>
+                                    <tr class="border-b">
+                                        <td class="py-3 px-2">Meja <?= $row['nomor_meja'] ?></td>
+                                        <td class="py-3 px-2"><?= htmlspecialchars($row['nama_pelanggan'] ?? 'Take Away') ?></td>
+                                        <td class="py-3 px-2"><button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border rounded-md px-4 py-1 bg-gray-200 hover:bg-gray-300 transition">Lihat Detail</button></td>
+                                        <td class="py-3 px-2"><?= date('d/m/Y H:i', strtotime($row['waktu_pesan'])) ?></td>
+                                        <td class="py-3 px-2"><span class="font-semibold text-gray-500"><?= $row['status'] ?></span></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
             </div>
-            
-            <!-- Confirmed Section -->
+        </main>
+    </div>
+
+    <div id="reservasiModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+        <div class="bg-white w-1/3 max-w-lg rounded-lg shadow-xl p-6 relative">
+            <button onclick="tutupModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black text-3xl font-bold">&times;</button>
+            <h2 class="text-2xl font-bold mb-4 text-center">Detail Menu Pesanan</h2>
+            <div id="detailPesananContent" class="max-h-80 overflow-y-auto">
+                <ul id="menuList" class="list-none text-left w-full px-2 text-gray-800 space-y-2">
+                    </ul>
+            </div>
         </div>
     </div>
 
-    <div id="reservasiModal" class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center h-screen hidden">
-        <div class="bg-white w-1/3 rounded-lg shadow-lg p-6 relative">
-            <button id="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-black text-2xl font-bold">&times;</button>
-            <h2 class="text-xl font-semibold mb-4">Detail Menu Pesanan</h2>
-            <ul id="menuList" class="list-disc text-left w-full px-6 text-gray-700 space-y-1">
-                <!-- Diisi via JS -->
-            </ul>
-        </div>
-    </div>
-
+<script src="../script/listPesanan.js"></script>
 <script>
     const detailPesananData = <?= json_encode($semuaDetailPesanan) ?>;
 </script>
-<script src="../script/notifikasi.js"></script>
 </body>
 </html>
 
