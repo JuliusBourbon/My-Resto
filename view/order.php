@@ -275,37 +275,58 @@
                     };
                 }
 
-                let bg = '';
-                switch (item.nama_kategori) {
-                    case 'Sarapan': bg = 'bg-[#C8F6BC]'; break;
-                    case 'Hidangan Utama': bg = 'bg-[#FFD27E]'; break;
-                    case 'Minuman': bg = 'bg-[#A2F9FF]'; break;
-                    case 'Penutup': bg = 'bg-[#FEC0FF]'; break;
-                    default: bg = 'bg-gray-200';
+                const isAvailable = item.status_ketersediaan === 'Tersedia';
+
+                let bg = 'bg-gray-300'; 
+                if (isAvailable) {
+                    switch (item.nama_kategori) {
+                        case 'Sarapan': bg = 'bg-[#C8F6BC]'; break;
+                        case 'Hidangan Utama': bg = 'bg-[#FFD27E]'; break;
+                        case 'Minuman': bg = 'bg-[#A2F9FF]'; break;
+                        case 'Penutup': bg = 'bg-[#FEC0FF]'; break;
+                        default: bg = 'bg-gray-200';
+                    }
+                }
+                
+                let quantityControlHTML = '';
+                if (isAvailable) {
+                    const currentQuantity = selectedQuantities[item.id_menu] || 0;
+                    quantityControlHTML = `
+                        <div class="flex items-center justify-center gap-[10px] mt-4">
+                            <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">-</button>
+                            <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center"
+                                value="${currentQuantity}" min="0">
+                            <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">+</button>
+                        </div>
+                    `;
+                } else {
+                    quantityControlHTML = `
+                        <div class="mt-4 text-center font-bold text-gray-700">
+                            Tidak Tersedia
+                        </div>
+                    `;
+                    if (selectedQuantities[item.id_menu]) {
+                        delete selectedQuantities[item.id_menu];
+                    }
                 }
 
                 const el = document.createElement('div');
-                el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm h-36 ${bg}`;
+                const unavailableClass = !isAvailable ? 'opacity-60' : '';
+                el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm h-36 ${bg} ${unavailableClass}`;
                 el.dataset.id_menu = item.id_menu;
-                const currentQuantity = selectedQuantities[item.id_menu] || 0;
-
+                
                 el.innerHTML = `
                     <div class="flex-grow">
                         <h3 class="font-bold text-gray-800">${item.nama}</h3>
                         <p class="text-sm text-gray-700 font-medium">Rp${parseInt(item.harga).toLocaleString('id-ID')}</p>
                     </div>
-                    <div class="flex items-center justify-center gap-[10px] mt-4">
-                        <button class="quantity-btn minus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">-</button>
-                        <input type="number" class="quantity font-semibold text-gray-800 text-lg bg-transparent w-10 text-center"
-                            value="${currentQuantity}" min="0">
-                        <button class="quantity-btn plus bg-white rounded-md p-1 w-7 h-7 flex items-center justify-center text-lg font-bold text-gray-600 shadow">+</button>
-                    </div>
+                    ${quantityControlHTML} 
                 `;
                 container.appendChild(el);
             });
-
             bindQuantityButtons();
         }
+
 
         function fetchMenu(kategoriId = null) {
             let url = '../src/menuFiltered.php';
@@ -317,6 +338,7 @@
                 .then(res => res.json())
                 .then(data => {
                     updateMenuContainer(data);
+                    updateOrderSummary(); 
                 });
         }
 
