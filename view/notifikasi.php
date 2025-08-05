@@ -89,8 +89,8 @@
                                     <?php
                                         $status = $row['status'];
                                         $statusColor = match ($status) {
-                                            'Reservasi' => 'text-yellow-500',
-                                            'Selesai' => 'text-green-500',
+                                            'Preparing' => 'text-yellow-500',
+                                            'Ready To Serve' => 'text-green-500',
                                             default => 'text-gray-800'
                                         };
                                     ?>
