@@ -25,9 +25,11 @@ if (isset($_GET['meja']) && $_GET['meja'] !== '') {
     $stmtMeja->execute();
     $resultMeja = $stmtMeja->get_result();
 
-    if ($resultMeja && $rowMeja = $resultMeja->fetch_assoc()) {
-        $id_meja = $rowMeja['id_meja'];
+    if (isset($_GET['meja']) && $_GET['meja'] !== '') {
+        // $_GET['meja'] sekarang adalah id_meja
+        $id_meja = (int) $_GET['meja'];
 
+        // Langsung gunakan $id_meja untuk query pesanan
         $stmtPesanan = $conn->prepare("
             SELECT nama 
             FROM pesanan 

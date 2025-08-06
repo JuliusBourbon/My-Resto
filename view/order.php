@@ -128,12 +128,20 @@
             <select name="meja" class="w-full p-2 mb-4 border rounded" onchange="this.form.submit()" required>
               <option value="">-- Pilih Meja --</option>
               <?php
-              $counter11 = 1;
-              while ($row = $mejaReserved->fetch_assoc()) :
-                $label = $row['nomor'] == 11 ? '11-' . $counter11++ : $row['nomor'];
-                $selected = isset($_GET['meja']) && $_GET['meja'] == $row['nomor'] ? 'selected' : '';
-              ?>
-              <option value="<?= $row['nomor'] ?>" <?= $selected ?>>Meja <?= $label ?></option>
+              mysqli_data_seek($mejaReserved, 0); // Reset pointer loop jika diperlukan
+                while ($row = $mejaReserved->fetch_assoc()) :
+                    // Cek jika nomor meja adalah 11
+                    if ($row['nomor'] == 11) {
+                        // Ambil digit terakhir dari id_meja. Contoh: 15 % 10 = 5
+                        $sub_nomor = $row['id_meja'] % 10; 
+                        $label = '11-' . $sub_nomor;
+                    } else {
+                        $label = $row['nomor'];
+                    }
+
+                    $selected = isset($_GET['meja']) && $_GET['meja'] == $row['id_meja'] ? 'selected' : '';
+                ?>
+                    <option value="<?= $row['id_meja'] ?>" <?= $selected ?>>Meja <?= $label ?></option>
               <?php endwhile; ?>
             </select>
           </form>
