@@ -1,7 +1,10 @@
 <?php
     require_once __DIR__ . '/../config.php';
     require_once __DIR__ . '/../src/pembayaranDb.php';
-
+    require_once __DIR__ . '/../src/middleware.php';
+    requireRole('kasir');
+    $nama = $_SESSION['nama'] ?? $_SESSION['email'] ?? 'User';
+    $role = $_SESSION['role'] ?? '-';
     $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $orders = getUnpaidOrders();    
 ?>
@@ -29,13 +32,27 @@
             <div class="relative flex items-center justify-center px-10 py-4">
                 <div class="absolute left-10 top-1/2 -translate-y-1/2">
                     <div class="w-18 h-18">
-                        <img src="<?= $base_url ?>/img/myresto_icon.jpg" alt="Logo" class="w-full h-full object-contain">
+                        <img src="<?= $base_url ?>/img/myresto_icon.jpg" alt="Logo" class="w-full h-full object-contain" />
                     </div>
-                </div>
-                <span class="text-2xl font-bold">MyResto</span>
-                <div class="absolute right-10 top-1/2 -translate-y-1/2">
+                    </div>
+                    <span class="text-2xl font-bold">MyResto</span>
+                    <div class="absolute right-10 top-1/2 -translate-y-1/2">
                     <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white cursor-pointer">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        <div class="absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-4">
+                        <form action="<?= $base_url ?>/logout" method="POST">
+                            <button type="submit" class="ml-2 mr-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">
+                            Logout
+                            </button>
+                        </form>
+                        <div class="text-right text-sm mr-4">
+                            <div class="font-semibold text-gray-700"><?= htmlspecialchars($nama) ?></div>
+                            <div class="text-gray-500 capitalize"><?= htmlspecialchars($role) ?></div>
+                        </div>
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                        </svg>
                     </div>
                 </div>
             </div>

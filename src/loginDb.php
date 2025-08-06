@@ -20,6 +20,7 @@ $result = mysqli_stmt_get_result($stmt);
 if (mysqli_num_rows($result) === 1) {
     $user = mysqli_fetch_assoc($result);
     $_SESSION['email'] = $user['email'];
+    $_SESSION['nama'] = $user['nama']; 
     $_SESSION['role'] = $user['role'];
 
     // Redirect sesuai role
@@ -34,11 +35,11 @@ if (mysqli_num_rows($result) === 1) {
             header("Location: ../pembayaran");
             break;
         default:
-            echo "<script>alert('Role tidak dikenali'); window.location.href = '../view/login.php';</script>";
+            echo "<script>alert('Role tidak dikenali'); window.location.href = '../login';</script>";
             break;
     }
     exit();
 } else {
-    echo "<script>alert('Login gagal: email atau password salah'); window.location.href = '../view/login.php';</script>";
+    echo "<script>alert('Login gagal: email atau password salah'); window.location.href = '../login';</script>";
 }
 ?>

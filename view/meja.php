@@ -1,9 +1,12 @@
 <?php
-    session_start();
     require_once __DIR__ . '/../config.php';
     require_once __DIR__ . '/../src/mejaDb.php';
+    require_once __DIR__ . '/../src/middleware.php';
+    requireRole('pelayan');
     $currentPage = basename($_SERVER['PHP_SELF']);
     $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $nama = $_SESSION['nama'] ?? $_SESSION['email'] ?? 'User';
+    $role = $_SESSION['role'] ?? '-';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -47,6 +50,17 @@
         <span class="text-2xl font-bold">MyResto</span>
         <div class="absolute right-10 top-1/2 -translate-y-1/2">
           <div class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white cursor-pointer">
+            <div class="absolute right-10 top-1/2 -translate-y-1/2 flex items-center gap-4">
+              <form action="<?= $base_url ?>/logout" method="POST">
+                <button type="submit" class="ml-2 mr-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition text-sm">
+                  Logout
+                </button>
+              </form>
+              <div class="text-right text-sm mr-4">
+                <div class="font-semibold text-gray-700"><?= htmlspecialchars($nama) ?></div>
+                <div class="text-gray-500 capitalize"><?= htmlspecialchars($role) ?></div>
+              </div>
+            </div>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
               <circle cx="12" cy="7" r="4" />
@@ -75,6 +89,7 @@
             </a>
         </div>
     </div>
+    </nav>
 
 
     <!-- Layout Meja -->

@@ -40,6 +40,10 @@ switch ($request) {
         require __DIR__ . '/view/notifikasi.php';
         break;
 
+    case $me.'/logout' :
+        require __DIR__ . '/src/logout.php';
+        break;
+
     default:
         http_response_code(404);
         echo "404 - Halaman Tidak Ditemukan";
