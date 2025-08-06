@@ -9,53 +9,48 @@ $counter = 1;
 $counter11 = 1;
 
 $tersedia = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Tersedia'")->fetch_assoc()['total'];
-$penuh     = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reserved'")->fetch_assoc()['total'];
+$penuh     = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reservasi'")->fetch_assoc()['total'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['meja'], $_POST['nama'], $_POST['jumlah'])) {
+    // Pastikan semua data yang dibutuhkan ada
+    if (isset($_POST['id_meja'], $_POST['nama'], $_POST['jumlah'])) {
         
-        $nomor_meja     = (int) $_POST['meja'];
-        $nama_pelanggan = $_POST['nama']; // Kita akan escape nanti di dalam query
+        // 1. Langsung ambil id_meja dari form. Tidak perlu query lagi.
+        $id_meja        = (int) $_POST['id_meja'];
+        $nama_pelanggan = $_POST['nama'];
         $jumlah         = (int) $_POST['jumlah'];
 
-        // Gunakan Prepared Statements untuk keamanan
-        
-        // 1. Dapatkan id_meja dari nomor meja
-        $stmtMeja = $conn->prepare("SELECT id_meja FROM meja WHERE nomor = ? LIMIT 1");
-        $stmtMeja->bind_param("i", $nomor_meja);
-        $stmtMeja->execute();
-        $resultMeja = $stmtMeja->get_result();
-        
-        if ($resultMeja && $rowMeja = $resultMeja->fetch_assoc()) {
-            $id_meja = $rowMeja['id_meja'];
-
-            // Mulai transaksi untuk memastikan kedua query berhasil
+        // Pastikan id_meja valid (lebih dari 0)
+        if ($id_meja > 0) {
+            // Mulai transaksi untuk memastikan konsistensi data
             $conn->begin_transaction();
             try {
-                // 2. Insert ke tabel pesanan
+                // 2. Insert ke tabel pesanan menggunakan id_meja yang sudah didapat
                 $stmtPesanan = $conn->prepare(
                     "INSERT INTO pesanan (id_meja, id_pelayan, waktu_pesan, status, nama, jumlah_pelanggan)
                      VALUES (?, 1, NOW(), 'Reservasi', ?, ?)"
                 );
+                // Bind parameter 'isi' -> integer, string, integer
                 $stmtPesanan->bind_param("isi", $id_meja, $nama_pelanggan, $jumlah);
                 $stmtPesanan->execute();
 
-                // 3. Update status meja
+                // 3. Update status meja menjadi 'Reserved' atau 'Reservasi' (sesuaikan dengan sistem Anda)
+                // Di query status Anda adalah 'Reservasiz', tapi di sini 'Reserved'. Mari kita samakan.
                 $stmtUpdateMeja = $conn->prepare("UPDATE meja SET status = 'Reserved' WHERE id_meja = ?");
                 $stmtUpdateMeja->bind_param("i", $id_meja);
                 $stmtUpdateMeja->execute();
 
-                // Jika semua berhasil, commit
+                // Jika semua berhasil, commit transaksi
                 $conn->commit();
                 
                 header("Location: /My-Resto/meja"); // Pastikan path ini benar
                 exit;
 
             } catch (Exception $e) {
-                // Jika ada error, batalkan semua
+                // Jika ada error, batalkan semua perubahan
                 $conn->rollback();
-                // Opsional: Tampilkan pesan error saat development
-                // die("Transaksi gagal: " . $e->getMessage());
+                // Opsional: Log error untuk debugging
+                // error_log("Transaksi gagal: " . $e->getMessage());
                 header("Location: /My-Resto/meja?error=1");
                 exit;
             }

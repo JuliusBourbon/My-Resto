@@ -3,6 +3,25 @@
 require_once __DIR__ . '/connection.php';
 
 $pendingOrders = [];
+$queryPending = $conn->query("
+    SELECT 
+        p.id_pesanan, 
+        m.nomor AS nomor_meja, 
+        p.nama AS nama_pelanggan, 
+        p.status, 
+        p.waktu_pesan
+    FROM pesanan p
+    JOIN meja m ON p.id_meja = m.id_meja
+    WHERE p.status = 'Pending'
+    ORDER BY p.waktu_pesan ASC
+");
+if ($queryPending) {
+    while ($row = $queryPending->fetch_assoc()) {
+        $pendingOrders[] = $row;
+    }
+}
+
+$jumlahPending = count($pendingOrders);
 
 $queryPending = $conn->query("
     SELECT 

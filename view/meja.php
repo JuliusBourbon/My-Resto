@@ -158,19 +158,37 @@
         <h1 class="text-2xl font-semibold mb-4">Reservasi</h1>
         <form action="<?= $base_url ?>/src/mejaDb.php" method="POST" class="w-full">
           <h1 class="mb-2">No. Meja</h1>
-          <select name="meja" class="w-full p-2 mb-4 border rounded" required>
-            <?php while ($row = $mejaTersedia->fetch_assoc()) : ?>
-              <?php
+          <select name="id_meja" class="w-full p-2 mb-4 border rounded" required>
+            <option value="">-- Pilih Meja Tersedia --</option>
+            <?php
+            // 1. Buat peta referensi untuk SEMUA meja bernomor 11
+            $semuaMeja11Query = $conn->query("SELECT id_meja FROM meja WHERE nomor = 11 ORDER BY id_meja ASC");
+            $petaIdKeSubNomor = [];
+            $subNomorCounter = 1;
+            while ($meja11 = $semuaMeja11Query->fetch_assoc()) {
+                // Peta ini akan berisi: [id_meja => sub_nomor]
+                // Contoh: [45 => 1, 46 => 2, 47 => 3, ...]
+                $petaIdKeSubNomor[$meja11['id_meja']] = $subNomorCounter++;
+            }
+
+            // 2. Query utama untuk menampilkan meja yang tersedia (sama seperti sebelumnya)
+            $mejaTersedia = $conn->query("SELECT * FROM meja WHERE status = 'Tersedia' ORDER BY id_meja ASC");
+            
+            while ($row = $mejaTersedia->fetch_assoc()) :
+                // 3. Logika pembuatan label yang baru
+                $label = $row['nomor']; // Default label adalah nomor meja itu sendiri
+
                 if ($row['nomor'] == 11) {
-                  $label = '11-' . $counter11;
-                  $counter11++;
-                } else {
-                  $label = $row['nomor'];
+                    // Jika ini adalah meja nomor 11, cari sub-nomornya di peta
+                    if (isset($petaIdKeSubNomor[$row['id_meja']])) {
+                        $subNomor = $petaIdKeSubNomor[$row['id_meja']];
+                        $label = '11-' . $subNomor;
+                    }
                 }
-              ?>
-              <option value="<?= $row['nomor'] ?>"><?= $label ?></option>
+            ?>
+                <option value="<?= $row['id_meja'] ?>"><?= htmlspecialchars($label) ?></option>
             <?php endwhile; ?>
-          </select>
+         </select>
 
           <h1 class="mb-2">Nama Pelanggan</h1>
           <input type="text" name="nama" placeholder="Nama Pelanggan" class="w-full p-2 mb-4 border rounded" required>
