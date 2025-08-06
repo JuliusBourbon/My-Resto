@@ -1,3 +1,43 @@
+const confirmationModal = document.getElementById('confirmationModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalMessage = document.getElementById('modalMessage');
+const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+let formToSubmit = null; // Variabel untuk menyimpan form yang akan di-submit
+
+// Tambahkan event listener ke semua tombol aksi
+document.querySelectorAll('.confirm-action-btn').forEach(button => {
+    button.addEventListener('click', function(e) {
+        // Ambil pesan dari atribut data-message
+        const message = this.dataset.message;
+        
+        // Simpan form terdekat dari tombol yang diklik
+        formToSubmit = this.closest('form');
+        
+        // Atur isi pesan di modal
+        modalMessage.textContent = message;
+        
+        // Tampilkan modal
+        confirmationModal.classList.remove('hidden');
+        confirmationModal.classList.add('flex');
+    });
+});
+
+// Event listener untuk tombol "Ya, Lanjutkan" di dalam modal
+modalConfirmBtn.addEventListener('click', () => {
+    if (formToSubmit) {
+        formToSubmit.submit(); // Submit form yang sudah kita simpan
+    }
+});
+
+// Event listener untuk tombol "Batal" di dalam modal
+modalCancelBtn.addEventListener('click', () => {
+    confirmationModal.classList.add('hidden');
+    confirmationModal.classList.remove('flex');
+    formToSubmit = null; // Reset variabel
+});
+
 const pendingTab = document.getElementById('pendingTab');
 const confirmedTab = document.getElementById('confirmedTab');
 const pendingSection = document.getElementById('pendingSection');

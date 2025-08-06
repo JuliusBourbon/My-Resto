@@ -77,6 +77,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                 <th class="py-3 px-2">Detail Pesanan</th>
                 <th class="py-3 px-2">Waktu</th>
                 <th class="py-3 px-2">Status</th>
+                <th class="py-3 px-2">Note</th>
                 <th class="py-3 px-2">Aksi</th>
               </tr>
             </thead>
@@ -99,25 +100,37 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                     } ?>">
                       <?= $row['status'] ?>
                     </td>
+                    <td class="py-3 px-2 max-w-xs overflow-hidden text-ellipsis whitespace-nowrap" title="<?= htmlspecialchars($row['note']) ?>">
+                        <?= htmlspecialchars($row['note']) ?>
+                    </td>
                     <td class="py-3 px-2">
                       <div class="flex justify-center items-center gap-2 h-10">
                         <?php if ($row['status'] === 'Ready To Serve'): ?>
-                          <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php" onsubmit="return confirm('Konfirmasi pesanan telah disajikan?');">
-                            <input type="hidden" name="action" value="set_served" />
-                            <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
-                            <button type="submit" class="font-bold text-white bg-green-500 px-4 h-10 rounded-md hover:bg-green-600 transition">Selesai</button>
-                          </form>
+                            <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php">
+                                <input type="hidden" name="action" value="set_served" />
+                                <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
+                                <button type="button" class="confirm-action-btn font-bold text-white bg-green-500 px-4 h-10 rounded-md hover:bg-green-600 transition"
+                                        data-message="Apakah Anda yakin pesanan ini sudah disajikan ke pelanggan?">
+                                    Sajikan
+                                </button>
+                            </form>
                         <?php elseif ($row['status'] === 'Canceled'): ?>
-                          <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php" onsubmit="return confirm('Kosongkan meja dan batalkan?');">
-                            <input type="hidden" name="action" value="set_finish_order" />
-                            <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
-                            <button type="submit" class="font-bold text-white bg-red-500 w-10 h-10 rounded-md hover:bg-red-600 transition" title="Batalkan">X</button>
-                          </form>
-                          <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php" onsubmit="return confirm('Izinkan pesan ulang?');">
-                            <input type="hidden" name="action" value="set_reorder" />
-                            <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
-                            <button type="submit" class="font-bold text-white bg-blue-500 w-10 h-10 rounded-md hover:bg-blue-600 transition" title="Pesan Ulang">↻</button>
-                          </form>
+                            <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php">
+                                <input type="hidden" name="action" value="set_finish_order" />
+                                <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
+                                <button type="button" class="confirm-action-btn font-bold text-white bg-red-500 w-10 h-10 rounded-md hover:bg-red-600 transition" 
+                                        title="Batalkan Pesanan" data-message="Batalkan seluruh pesanan dan kosongkan meja?">
+                                    X
+                                </button>
+                            </form>
+                            <form method="POST" action="<?= $base_url ?>/src/notifikasiPost.php">
+                                <input type="hidden" name="action" value="set_reorder" />
+                                <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>" />
+                                <button type="button" class="confirm-action-btn font-bold text-white bg-blue-500 w-10 h-10 rounded-md hover:bg-blue-600 transition" 
+                                        title="Pesan Ulang" data-message="Izinkan pelanggan untuk memesan ulang? Status pesanan akan kembali ke 'Reservasi'.">
+                                    ↻
+                                </button>
+                            </form>
                         <?php else: ?>
                           <span class="text-sm text-gray-400">-</span>
                         <?php endif; ?>
@@ -166,13 +179,25 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
   </div>
 
   <!-- Modal -->
-  <div id="reservasiModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
+  <div id="reservasiModal" class="fixed inset-0 bg-opacity-60 hidden items-center justify-center z-50">
     <div class="bg-white w-1/3 max-w-lg rounded-lg shadow-xl p-6 relative">
       <button onclick="tutupModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black text-3xl font-bold">&times;</button>
       <h2 class="text-2xl font-bold mb-4 text-center">Detail Menu Pesanan</h2>
       <div id="detailPesananContent" class="max-h-80 overflow-y-auto">
         <ul id="menuList" class="list-none text-left w-full px-2 text-gray-800 space-y-2"></ul>
       </div>
+    </div>
+  </div>
+
+  <div id="confirmationModal" class="fixed inset-0 bg-opacity-60 hidden items-center justify-center z-50">
+    <div class="bg-white w-full max-w-md rounded-lg shadow-xl p-6 relative">
+        <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-center">Konfirmasi Tindakan</h2>
+        <p id="modalMessage" class="text-center text-gray-600 mb-6">Apakah Anda yakin?</p>
+        
+        <div class="flex justify-end gap-4">
+            <button id="modalCancelBtn" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Batal</button>
+            <button id="modalConfirmBtn" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Ya, Lanjutkan</button>
+        </div>
     </div>
   </div>
 

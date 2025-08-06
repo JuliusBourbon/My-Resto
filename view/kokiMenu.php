@@ -86,7 +86,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             ];
             $bgClass = $bgMap[$row['nama_kategori']] ?? 'bg-gray-200';
           ?>
-            <button class="kategori-btn p-4 rounded-lg text-center font-semibold text-gray-700 text-xl shadow-sm h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
+            <button class="kategori-btn p-4 rounded-lg text-center font-semibold hover:border-1 hover:text-black text-gray-700 text-xl shadow-sm h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
               <?= $row['nama_kategori'] ?>
             </button>
           <?php endwhile; ?>

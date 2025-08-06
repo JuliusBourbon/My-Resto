@@ -17,26 +17,29 @@ $mejaReserved = $conn->query("SELECT * FROM meja WHERE status = 'Reserved'");
 $counter11 = 1;
 $pesananNama = null;
 
-// Ambil nama pelanggan berdasarkan nomor meja (via ?meja=...)
 if (isset($_GET['meja']) && $_GET['meja'] !== '') {
     $nomor_meja = (int) $_GET['meja'];
 
-    // Cari id_meja dari nomor meja
-    $result = $conn->query("SELECT id_meja FROM meja WHERE nomor = $nomor_meja LIMIT 1");
-    if ($result && $row = $result->fetch_assoc()) {
-        $id_meja = $row['id_meja'];
+    $stmtMeja = $conn->prepare("SELECT id_meja FROM meja WHERE nomor = ? LIMIT 1");
+    $stmtMeja->bind_param("i", $nomor_meja);
+    $stmtMeja->execute();
+    $resultMeja = $stmtMeja->get_result();
 
-        // Cari pesanan dengan status 'Reservasi' pada meja tersebut
-        $queryPesanan = $conn->query("
+    if ($resultMeja && $rowMeja = $resultMeja->fetch_assoc()) {
+        $id_meja = $rowMeja['id_meja'];
+
+        $stmtPesanan = $conn->prepare("
             SELECT nama 
             FROM pesanan 
-            WHERE id_meja = $id_meja 
-              AND status = 'Reservasi' 
+            WHERE id_meja = ? AND status != 'Selesai' 
             ORDER BY waktu_pesan DESC 
             LIMIT 1
         ");
+        $stmtPesanan->bind_param("i", $id_meja);
+        $stmtPesanan->execute();
+        $resultPesanan = $stmtPesanan->get_result();
 
-        if ($queryPesanan && $data = $queryPesanan->fetch_assoc()) {
+        if ($resultPesanan && $data = $resultPesanan->fetch_assoc()) {
             $pesananNama = $data['nama'];
         }
     }

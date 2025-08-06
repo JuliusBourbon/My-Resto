@@ -51,16 +51,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id_
         }
 
     } elseif ($action === 'set_canceled' && $id_pesanan > 0) {
+        // Ambil catatan dari POST, jika tidak ada beri string kosong
+        $note = $_POST['cancel_note'] ?? '';
+
         $conn->begin_transaction();
 
         try {
-            // Update status pesanan
-            $stmtPesanan = $conn->prepare("UPDATE pesanan SET status = 'Canceled' WHERE id_pesanan = ?");
-            $stmtPesanan->bind_param("i", $id_pesanan);
+            // PERUBAHAN: Tambahkan 'note = ?' ke query UPDATE
+            $stmtPesanan = $conn->prepare("UPDATE pesanan SET status = 'Canceled', note = ? WHERE id_pesanan = ?");
+            // PERUBAHAN: bind_param sekarang "si" (string untuk note, integer untuk id)
+            $stmtPesanan->bind_param("si", $note, $id_pesanan);
             $stmtPesanan->execute();
             $stmtPesanan->close();
 
-            // Update status di detail_transaksi
+            // Update status di detail_transaksi (tetap sama)
             $stmtDetail = $conn->prepare("UPDATE detail_transaksi SET status = 'Dibatalkan' WHERE id_pesanan = ?");
             $stmtDetail->bind_param("i", $id_pesanan);
             $stmtDetail->execute();
@@ -84,5 +88,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id_
 
 $conn->close();
 
-header("Location: {$base_url}/list-pesanan");
+header("Location: list-pesanan");
 exit;

@@ -103,7 +103,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             ];
             $bgClass = $bgMap[$row['nama_kategori']] ?? 'bg-gray-200';
           ?>
-          <button class="kategori-btn p-4 rounded-lg text-center font-semibold text-gray-700 hover:border-1 shadow-sm text-xl h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
+          <button class="kategori-btn p-4 rounded-lg text-center hover:text-black font-semibold text-gray-700 hover:border-1 shadow-sm text-xl h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
             <?= $row['nama_kategori'] ?>
           </button>
           <?php endwhile; ?>
@@ -153,10 +153,26 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         </div>
       </div>
     </main>
+
+    <div id="alertModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
+      <div class="bg-white p-6 rounded-lg shadow-md max-w-sm text-center">
+        <p id="alertMessage" class="text-gray-800 mb-4">Pesan alert di sini</p>
+        <button id="closeAlert" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">OK</button>
+      </div>
+    </div>
   </div>
 
   <!-- <script src="../script/logout.js"></script> -->
   <script>
+    function showCustomAlert(message) {
+      document.getElementById('alertMessage').textContent = message;
+      document.getElementById('alertModal').classList.remove('hidden');
+    }
+
+    // Tombol untuk menutup alert
+    document.getElementById('closeAlert').addEventListener('click', () => {
+      document.getElementById('alertModal').classList.add('hidden');
+    });
     const icon = document.getElementById('profileIcon');
     const dropdown = document.getElementById('dropdownMenu');
 
@@ -292,32 +308,6 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         };
       });
 
-
-      document.querySelector(".konfirmasi-btn").onclick = () => {
-        const nomorMeja = document.querySelector("select[name='meja']").value;
-        if (!nomorMeja) return alert("Pilih meja terlebih dahulu.");
-
-        const pesanan = Object.entries(selectedQuantities)
-          .filter(([, qty]) => qty > 0)
-          .map(([id_menu, jumlah]) => ({ id_menu: parseInt(id_menu), jumlah }));
-
-        if (pesanan.length === 0) return alert("Pesanan kosong.");
-
-        fetch("<?= $base_url ?>/src/submitPesanan.php", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan })
-        })
-        .then(res => res.json())
-        .then(res => {
-          if (res.success) {
-            alert("Pesanan berhasil!");
-            window.location.reload();
-          } else {
-            alert("Gagal menyimpan: " + res.message);
-          }
-        });
-      };
     });
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -351,6 +341,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             b.classList.add("text-gray-700");
           });
 
+          // Jika kategori baru dipilih, aktifkan tampilan khusus
           if (selectedKategori !== null) {
             btn.classList.add("border-1", "text-black");
             btn.classList.remove("text-gray-700");
@@ -364,13 +355,13 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
       document.querySelector(".konfirmasi-btn").onclick = () => {
         const nomorMeja = document.querySelector("select[name='meja']").value;
-        if (!nomorMeja) return alert("Pilih meja terlebih dahulu.");
+        if (!nomorMeja) return showCustomAlert("Pilih meja terlebih dahulu.");
 
         const pesanan = Object.entries(selectedQuantities)
           .filter(([, qty]) => qty > 0)
           .map(([id_menu, jumlah]) => ({ id_menu: parseInt(id_menu), jumlah }));
 
-        if (pesanan.length === 0) return alert("Pesanan kosong.");
+        if (pesanan.length === 0) return showCustomAlert("Pesanan kosong.");
 
         fetch("<?= $base_url ?>/src/submitPesanan.php", {
           method: "POST",
@@ -380,10 +371,10 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         .then(res => res.json())
         .then(res => {
           if (res.success) {
-            alert("Pesanan berhasil!");
+            showCustomAlert("Pesanan berhasil!");
             window.location.reload();
           } else {
-            alert("Gagal menyimpan: " + res.message);
+            showCustomAlert("Gagal menyimpan: " + res.message);
           }
         });
       };

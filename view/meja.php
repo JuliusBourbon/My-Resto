@@ -168,7 +168,7 @@
             <input type="number" id="jumlahCustom" placeholder="Custom" class="text-xl text-center border rounded-sm w-1/3 bg-gray-100" min="1">
           </div>
 
-          <input type="hidden" name="jumlah" id="jumlahInput" required>
+          <input type="hidden" name="jumlah" id="jumlahValue" value="1" required>
 
           <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-800 transition duration-200 w-full">
             Reservasi
@@ -193,19 +193,51 @@
       }
     });
 
-    const jumlahButtons = document.querySelectorAll('.btn-jumlah');
-    const jumlahInput = document.getElementById('jumlahInput');
-    const jumlahCustom = document.getElementById('jumlahCustom');
+    document.addEventListener('DOMContentLoaded', function() {
+      const jumlahButtons = document.querySelectorAll('.btn-jumlah');
+      const jumlahCustomInput = document.getElementById('jumlahCustom');
+      const hiddenJumlahInput = document.getElementById('jumlahValue');
 
-    jumlahButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        jumlahInput.value = button.value;
-        jumlahCustom.value = '';
+      // Tambahkan class untuk style tombol aktif
+      const activeClass = 'bg-blue-500 text-white';
+      const inactiveClass = 'bg-gray-300';
+      
+      // Beri tombol pertama style aktif sebagai default
+      if (jumlahButtons.length > 0) {
+          jumlahButtons[0].classList.add(...activeClass.split(' '));
+          jumlahButtons[0].classList.remove(...inactiveClass.split(' '));
+      }
+
+      // Event listener untuk tombol preset (1, 2, 3)
+      jumlahButtons.forEach(button => {
+          button.addEventListener('click', function() {
+              // Update nilai input tersembunyi
+              hiddenJumlahInput.value = this.value;
+
+              // Hapus nilai di input custom
+              jumlahCustomInput.value = '';
+
+              // Atur style tombol aktif
+              jumlahButtons.forEach(btn => {
+                  btn.classList.remove(...activeClass.split(' '));
+                  btn.classList.add(...inactiveClass.split(' '));
+              });
+              this.classList.add(...activeClass.split(' '));
+              this.classList.remove(...inactiveClass.split(' '));
+          });
       });
-    });
 
-    jumlahCustom.addEventListener('input', () => {
-      jumlahInput.value = jumlahCustom.value;
+      // Event listener untuk input custom
+      jumlahCustomInput.addEventListener('input', function() {
+          // Update nilai input tersembunyi jika ada isinya, jika tidak default ke 1
+          hiddenJumlahInput.value = this.value || '1';
+
+          // Hapus style aktif dari semua tombol preset
+          jumlahButtons.forEach(btn => {
+              btn.classList.remove(...activeClass.split(' '));
+              btn.classList.add(...inactiveClass.split(' '));
+          });
+      });
     });
   </script>
 </body>

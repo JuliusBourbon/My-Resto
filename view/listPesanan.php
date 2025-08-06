@@ -107,16 +107,20 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
                     <td><?= date('H:i', strtotime($row['waktu_pesan'])) ?></td>
                     <td>
                       <div class="flex justify-center gap-2">
-                        <form method="POST" action="<?= $base_url ?>/list-pesanan" onsubmit="return confirm('Batalkan pesanan ini?');">
-                          <input type="hidden" name="action" value="set_canceled">
-                          <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
-                          <button class="w-10 h-10 bg-red-500 text-white rounded hover:bg-red-600">X</button>
-                        </form>
-                        <form method="POST" action="<?= $base_url ?>/list-pesanan" onsubmit="return confirm('Proses pesanan ini?');">
-                          <input type="hidden" name="action" value="set_preparing">
-                          <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
-                          <button class="w-10 h-10 bg-green-500 text-white rounded hover:bg-green-600">✓</button>
-                        </form>
+                          <button type="button" class="cancel-btn font-bold text-white bg-red-500 w-10 h-10 rounded-md hover:bg-red-600 transition" 
+                                  data-order-id="<?= $row['id_pesanan'] ?>">
+                              X
+                          </button>
+
+                          <form method="POST" action="<?= $base_url ?>/list-pesanan">
+                              <input type="hidden" name="action" value="set_preparing">
+                              <input type="hidden" name="id_pesanan" value="<?= $row['id_pesanan'] ?>">
+                              
+                              <button type="button" class="confirm-action-btn w-10 h-10 bg-green-500 text-white rounded hover:bg-green-600"
+                                      data-message="Proses pesanan ini dan ubah status menjadi 'Preparing'?">
+                                  ✓
+                              </button>
+                          </form>
                       </div>
                     </td>
                   </tr>
@@ -164,20 +168,116 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         </div>
       </div>
     </main>
-  </div>
 
-  <!-- Modal Detail -->
-  <div id="reservasiModal" class="fixed inset-0 bg-black bg-opacity-60 hidden items-center justify-center z-50">
-    <div class="bg-white w-1/3 max-w-lg rounded-lg shadow-xl p-6 relative">
-      <button onclick="tutupModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black text-3xl font-bold">&times;</button>
-      <h2 class="text-2xl font-bold mb-4 text-center">Detail Menu Pesanan</h2>
-      <div id="detailPesananContent" class="max-h-80 overflow-y-auto">
-        <ul id="menuList" class="list-none px-2 text-gray-800 space-y-2"></ul>
+    <div id="cancelModal" class="fixed inset-0 bg-opacity-60 hidden items-center justify-center z-50">
+      <div class="bg-white w-1/3 max-w-lg rounded-lg shadow-xl p-6 relative">
+          <h2 id="cancelModalTitle" class="text-2xl font-bold mb-4 text-center">Batalkan Pesanan</h2>
+          <p class="text-center text-gray-600 mb-4">Berikan alasan pembatalan</p>
+          
+          <form id="cancelForm" method="POST" action="<?= $base_url ?>/src/listPesananPost.php">
+              <input type="hidden" name="action" value="set_canceled">
+              <input type="hidden" name="id_pesanan" id="cancelOrderIdInput">
+              
+              <textarea name="cancel_note" id="cancelNoteInput" rows="3" class="w-full p-2 border rounded mb-4" placeholder="Tulis catatan di sini..." required></textarea>
+              
+              <div class="flex justify-end gap-4">
+                  <button type="button" onclick="tutupCancelModal()" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Kembali</button>
+                  <button type="submit" class="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600">Konfirmasi Batal</button>
+              </div>
+          </form>
+      </div>
+    </div>
+  
+    <!-- Modal Detail -->
+    <div id="reservasiModal" class="fixed inset-0 bg-opacity-60 hidden items-center justify-center z-50">
+      <div class="bg-white w-1/3 max-w-lg rounded-lg shadow-xl p-6 relative">
+        <button onclick="tutupModal()" class="absolute top-3 right-4 text-gray-500 hover:text-black text-3xl font-bold">&times;</button>
+        <h2 class="text-2xl font-bold mb-4 text-center">Detail Menu Pesanan</h2>
+        <div id="detailPesananContent" class="max-h-80 overflow-y-auto">
+          <ul id="menuList" class="list-none px-2 text-gray-800 space-y-2"></ul>
+        </div>
       </div>
     </div>
   </div>
 
+  <div id="confirmationModal" class="fixed inset-0 bg-opacity-60 hidden items-center justify-center z-50">
+      <div class="bg-white w-full max-w-md rounded-lg shadow-xl p-6 relative">
+          <h2 id="modalTitle" class="text-2xl font-bold mb-4 text-center">Konfirmasi Tindakan</h2>
+          <p id="modalMessage" class="text-center text-gray-600 mb-6">Apakah Anda yakin?</p>
+          
+          <div class="flex justify-end gap-4">
+              <button id="modalCancelBtn" class="px-6 py-2 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300">Batal</button>
+              <button id="modalConfirmBtn" class="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600">Ya, Lanjutkan</button>
+          </div>
+      </div>
+  </div>
+
   <script src="<?= $base_url ?>/script/listPesanan.js"></script>
-  <script>const detailPesananData = <?= json_encode($semuaDetailPesanan) ?>;</script>
+  <script>
+    const confirmationModal = document.getElementById('confirmationModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+    const modalCancelBtn = document.getElementById('modalCancelBtn');
+
+    let formToSubmit = null; // Variabel untuk menyimpan form yang akan di-submit
+
+    // Event listener ini akan bekerja untuk SEMUA tombol dengan kelas 'confirm-action-btn'
+    document.querySelectorAll('.confirm-action-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const message = this.dataset.message;
+            formToSubmit = this.closest('form');
+            
+            modalMessage.textContent = message;
+            
+            confirmationModal.classList.remove('hidden');
+            confirmationModal.classList.add('flex');
+        });
+    });
+
+    // Event listener untuk tombol "Ya, Lanjutkan" di dalam modal
+    modalConfirmBtn.addEventListener('click', () => {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+    });
+
+    // Event listener untuk tombol "Batal" di dalam modal
+    modalCancelBtn.addEventListener('click', () => {
+        confirmationModal.classList.add('hidden');
+        confirmationModal.classList.remove('flex');
+        formToSubmit = null;
+    });
+    const detailPesananData = <?= json_encode($semuaDetailPesanan) ?>;
+    const cancelModal = document.getElementById('cancelModal');
+    const cancelModalTitle = document.getElementById('cancelModalTitle'); // Ambil elemen judul
+    const cancelOrderIdInput = document.getElementById('cancelOrderIdInput');
+    const cancelNoteInput = document.getElementById('cancelNoteInput');
+
+    document.querySelectorAll('.cancel-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const orderId = this.dataset.orderId;
+            
+            const tableRow = this.closest('tr');
+            
+            const tableInfo = tableRow.querySelectorAll('td')[1].textContent.trim();
+            const customerName = tableRow.querySelectorAll('td')[2].textContent.trim();
+            
+            cancelModalTitle.textContent = `Batalkan Pesanan (${tableInfo} - ${customerName})`;
+            
+            cancelOrderIdInput.value = orderId;
+            
+            cancelNoteInput.value = '';
+            
+            cancelModal.classList.remove('hidden');
+            cancelModal.classList.add('flex');
+        });
+    });
+
+    function tutupCancelModal() {
+        cancelModal.classList.add('hidden');
+        cancelModal.classList.remove('flex');
+    }
+  </script>
 </body>
 </html>
