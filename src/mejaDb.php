@@ -1,52 +1,53 @@
 <?php
-    require('connection.php');
+require_once __DIR__ . '/connection.php';
 
-    $meja = $conn->query("SELECT * FROM meja WHERE nomor != 11");
-    $mejaTersedia = $conn->query("SELECT * FROM meja WHERE status = 'Tersedia'");
-    $meja11 = $conn->query("SELECT * FROM meja WHERE nomor = 11");
-    $counter = 1;
-    $counter11 = 1;
-    $tersedia = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Tersedia'")->fetch_assoc()['total'];
-    $penuh = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reserved'")->fetch_assoc()['total'];
+$meja = $conn->query("SELECT * FROM meja WHERE nomor != 11");
+$mejaTersedia = $conn->query("SELECT * FROM meja WHERE status = 'Tersedia'");
+$meja11 = $conn->query("SELECT * FROM meja WHERE nomor = 11");
 
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        if (isset($_POST['meja']) && isset($_POST['nama'])) {
-            $nomor_meja = $_POST['meja'];
-            $nama_pelanggan = $_POST['nama'];
-            $jumlah = $_POST['jumlah'] ?? null;
+$counter = 1;
+$counter11 = 1;
 
-            // Cek id_meja
-            $query = $conn->query("SELECT id_meja FROM meja WHERE nomor = $nomor_meja");
-            $row = $query->fetch_assoc();
+$tersedia = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Tersedia'")->fetch_assoc()['total'];
+$penuh     = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reserved'")->fetch_assoc()['total'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (isset($_POST['meja'], $_POST['nama'], $_POST['jumlah'])) {
+        $nomor_meja     = (int) $_POST['meja'];
+        $nama_pelanggan = $conn->real_escape_string($_POST['nama']);
+        $jumlah         = (int) $_POST['jumlah'];
+
+        $result = $conn->query("SELECT id_meja FROM meja WHERE nomor = $nomor_meja LIMIT 1");
+        if ($result && $row = $result->fetch_assoc()) {
             $id_meja = $row['id_meja'];
 
-            // Insert ke pesanan
-            $conn->query("INSERT INTO pesanan (id_meja, id_pelayan, waktu_pesan, status, nama)
-              VALUES ($id_meja, 1, NOW(), 'Reservasi', '$nama_pelanggan')");
+            $conn->query("INSERT INTO pesanan (id_meja, id_pelayan, waktu_pesan, status, nama, jumlah_pelanggan)
+                          VALUES ($id_meja, 1, NOW(), 'Reservasi', '$nama_pelanggan', $jumlah)");
 
-
-            // Update status meja
             $conn->query("UPDATE meja SET status = 'Reserved' WHERE id_meja = $id_meja");
 
-            header("Location: ../view/meja.php");
+            header("Location: /My-Resto/meja");
             exit;
         }
     }
+}
 
-    if (isset($_GET['nomor_meja'])) {
-        $nomor_meja = (int) $_GET['nomor_meja'];
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['nomor_meja'])) {
+    header('Content-Type: application/json');
+    $nomor_meja = (int) $_GET['nomor_meja'];
 
-        $result = $conn->query("SELECT id_meja FROM meja WHERE nomor = $nomor_meja");
-        if ($row = $result->fetch_assoc()) {
-            $id_meja = $row['id_meja'];
+    $result = $conn->query("SELECT id_meja FROM meja WHERE nomor = $nomor_meja LIMIT 1");
+    if ($result && $row = $result->fetch_assoc()) {
+        $id_meja = $row['id_meja'];
 
-            $pesanan = $conn->query("SELECT nama FROM pesanan WHERE id_meja = $id_meja AND status = 'Reservasi' ORDER BY waktu_pesan DESC LIMIT 1");
+        $pesanan = $conn->query("SELECT nama FROM pesanan WHERE id_meja = $id_meja AND status = 'Reservasi' ORDER BY waktu_pesan DESC LIMIT 1");
 
-            if ($pesanan && $data = $pesanan->fetch_assoc()) {
-                echo json_encode(['nama' => $data['nama']]);
-            } else {
-                echo json_encode(['nama' => '']);
-            }
+        if ($pesanan && $data = $pesanan->fetch_assoc()) {
+            echo json_encode(['nama' => $data['nama']]);
+        } else {
+            echo json_encode(['nama' => '']);
         }
+    } else {
+        echo json_encode(['nama' => '']);
     }
-?>
+}

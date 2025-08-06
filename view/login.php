@@ -1,38 +1,45 @@
 <?php
+    session_start();
+    require_once __DIR__ . '/../config.php'; 
     $pageTitle = "Login - My Resto";
     $currentYear = date('Y'); 
-    session_start();
+    $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 ?>
 <!DOCTYPE html>
 <html lang="en">
-<script src="../script/login.js"></script>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title><?= htmlspecialchars($pageTitle) ?></title>
-    <link rel="stylesheet" href="../output.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="<?= $base_url ?>/output.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Asap+Condensed:ital,wght@0,200..900&family=Inter:ital,wght@0,100..900&family=Manrope:wght@200..800&family=Merriweather:ital,wght@0,300..900&family=Poppins:ital,wght@0,100..900&display=swap" rel="stylesheet">
 </head>
 <body class="font-sans bg-white w-screen h-screen overflow-hidden">
     <div class="flex flex-col md:flex-row w-screen h-screen">
+
         <!-- Form Section -->
         <div class="w-full md:w-1/2 flex justify-center items-center relative">
             <div class="w-full max-w-md">
+
                 <!-- Logo -->
                 <div class="flex justify-center items-center mb-24">
-                    <img src="../img/myresto_icon.jpg" alt="My Resto Logo" class="  h-1/2 w-1/2">
+                    <img src="<?= $base_url ?>/img/myresto_icon.jpg" alt="My Resto Logo" class="h-1/2 w-1/2">
                 </div>
 
-                <!-- Form Header -->
+                <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-2xl font-bold text-gray-800 mb-2">Login</h1>
                     <p class="text-gray-500">Selamat datang di MyResto<br>Sistem Pelayanan Restoran Unikom</p>
                 </div>
 
                 <!-- Form -->
-                <form action="../src/loginDb.php" method="POST">
+                <form action="<?= $base_url ?>/src/loginDb.php" method="POST">
                     <!-- Username -->
                     <div class="relative mb-5">
                         <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -76,7 +83,6 @@
                     </button>
                 </form>
 
-
                 <!-- Footer -->
                 <div class="text-center text-gray-500 text-sm absolute bottom-5 left-0 right-0">
                     <p>Tari Reog <?= htmlspecialchars($currentYear) ?></p>
@@ -84,10 +90,13 @@
             </div>
         </div>
 
-        <!-- Image Section -->
+        <!-- Background Image -->
         <div class="w-full md:w-1/2 flex justify-center items-center relative">
-            <img src="../img/login_bg.png" alt="" class="w-full h-full object-cover">
+            <img src="<?= $base_url ?>/img/login_bg.png" alt="" class="w-full h-full object-cover">
         </div>
     </div>
+
+    <!-- JS -->
+    <script src="<?= $base_url ?>/script/login.js"></script>
 </body>
 </html>
