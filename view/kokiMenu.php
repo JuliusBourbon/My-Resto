@@ -63,13 +63,17 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     </nav>
 
     <!-- Konten -->
-    <main class="flex-grow flex items-center justify-center p-6 gap-6">
-      <div class="w-[65%] flex flex-col gap-6">
+    <main class="flex-grow flex justify-center p-6 gap-6">
         <!-- Search -->
-        <div class="relative">
-          <i data-feather="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"></i>
-          <input type="text" placeholder="Search" class="w-full bg-white pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+        <div class="w-[65%] flex flex-col gap-6">
+          <div class="relative">
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg class="w-5 h-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                </svg>
+            </div>
+            <input type="text" id="searchInput" placeholder="Cari menu..." class="w-full bg-white pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          </div>
 
         <!-- Kategori -->
         <div class="grid grid-cols-4 gap-5">
@@ -82,7 +86,7 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
             ];
             $bgClass = $bgMap[$row['nama_kategori']] ?? 'bg-gray-200';
           ?>
-            <button class="kategori-btn p-4 rounded-lg text-center font-semibold text-gray-700 shadow-sm h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
+            <button class="kategori-btn p-4 rounded-lg text-center font-semibold text-gray-700 text-xl shadow-sm h-36 flex items-center justify-center <?= $bgClass ?>" data-kategori="<?= $row['id_kategori'] ?>">
               <?= $row['nama_kategori'] ?>
             </button>
           <?php endwhile; ?>
@@ -115,16 +119,16 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         const bg = bgMap[item.nama_kategori] || 'bg-gray-200';
 
         const el = document.createElement('div');
-        el.className = `menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm h-full ${bg}`;
+        el.className = `menu-item p-8 rounded-lg flex flex-col justify-between shadow-sm h-full ${bg}`;
         el.dataset.id_menu = item.id_menu;
 
         el.innerHTML = `
           <div class="flex flex-col items-center justify-center gap-2">
-            <h3 class="font-bold text-gray-800">${item.nama}</h3>
-            <p class="text-sm text-gray-700 font-medium">Rp${parseInt(item.harga).toLocaleString('id-ID')}</p>
+            <h3 class="font-bold text-gray-800 text-xl">${item.nama}</h3>
+            <p class="text-lg text-gray-700 font-medium">Rp${parseInt(item.harga).toLocaleString('id-ID')}</p>
             <form method="POST" action="">
               <input type="hidden" name="id_menu" value="${item.id_menu}">
-              <select name="status_ketersediaan" onchange="this.form.submit()" class="bg-white border border-gray-300 rounded px-3 py-1 text-sm shadow hover:border-blue-400 transition focus:outline-none">
+              <select name="status_ketersediaan" onchange="this.form.submit()" class="bg-white border border-gray-300 rounded px-2 py-1 text-md shadow hover:border-blue-400 transition focus:outline-none">
                 <option value="Tersedia" ${item.status_ketersediaan === 'Tersedia' ? 'selected' : ''}>Tersedia</option>
                 <option value="Tidak Tersedia" ${item.status_ketersediaan === 'Tidak Tersedia' ? 'selected' : ''}>Tidak Tersedia</option>
               </select>
@@ -149,12 +153,66 @@ $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     document.addEventListener("DOMContentLoaded", () => {
       fetchMenu();
 
-      document.querySelectorAll('.kategori-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const kategoriId = btn.dataset.kategori;
-          selectedKategori = selectedKategori === kategoriId ? null : kategoriId;
+      document.querySelectorAll(".kategori-btn").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.dataset.kategori;
+          const previouslySelected = selectedKategori;
+
+          selectedKategori = selectedKategori === id ? null : id;
+
+          document.querySelectorAll(".kategori-btn").forEach(b => {
+            b.classList.remove("border-1", "text-black");
+            b.classList.add("text-gray-700");
+          });
+
+          if (selectedKategori !== null) {
+            btn.classList.add("border-1", "text-black");
+            btn.classList.remove("text-gray-700");
+          }
+
           fetchMenu(selectedKategori);
-        });
+        };
+      });
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById('searchInput');
+      const menuContainer = document.getElementById('menu-container');
+
+      searchInput.addEventListener('input', () => {
+          const searchTerm = searchInput.value.toLowerCase();
+          const menuItems = menuContainer.querySelectorAll('.menu-item');
+
+          menuItems.forEach(item => {
+              const menuName = item.querySelector('h3').textContent.toLowerCase();
+
+              if (menuName.includes(searchTerm)) {
+                  item.style.display = 'flex'; 
+              } else {
+                  item.style.display = 'none'; 
+              }
+          });
+      });
+
+      document.querySelectorAll(".kategori-btn").forEach(btn => {
+        btn.onclick = () => {
+          const id = btn.dataset.kategori;
+          const previouslySelected = selectedKategori;
+
+          selectedKategori = selectedKategori === id ? null : id;
+
+          document.querySelectorAll(".kategori-btn").forEach(b => {
+            b.classList.remove("border-1", "text-black");
+            b.classList.add("text-gray-700");
+          });
+
+          if (selectedKategori !== null) {
+            btn.classList.add("border-1", "text-black");
+            btn.classList.remove("text-gray-700");
+          }
+
+          fetchMenu(selectedKategori);
+        };
       });
     });
   </script>
