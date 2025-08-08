@@ -154,51 +154,45 @@
   <!-- Reservasi Modal -->
   <div class="fixed top-0 left-0 right-0 z-50 flex justify-center items-center h-screen hidden" id="reservasiModal">
     <div class="flex justify-center items-center shadow-md rounded-md bg-white w-1/3">
-      <div class="flex flex-col items-center p-6">
+      <div class="flex flex-col items-center p-6 w-3/4">
         <h1 class="text-2xl font-semibold mb-4">Reservasi</h1>
         <form action="<?= $base_url ?>/src/mejaDb.php" method="POST" class="w-full">
           <h1 class="mb-2">No. Meja</h1>
-          <select name="id_meja" class="w-full p-2 mb-4 border rounded" required>
-            <option value="">-- Pilih Meja Tersedia --</option>
+          <select name="id_meja" id="id_meja" class="w-full p-2 mb-4 border rounded" required>
+            <option value="">Pilih Meja Tersedia</option>
             <?php
-            // 1. Buat peta referensi untuk SEMUA meja bernomor 11
             $semuaMeja11Query = $conn->query("SELECT id_meja FROM meja WHERE nomor = 11 ORDER BY id_meja ASC");
             $petaIdKeSubNomor = [];
             $subNomorCounter = 1;
             while ($meja11 = $semuaMeja11Query->fetch_assoc()) {
-                // Peta ini akan berisi: [id_meja => sub_nomor]
-                // Contoh: [45 => 1, 46 => 2, 47 => 3, ...]
                 $petaIdKeSubNomor[$meja11['id_meja']] = $subNomorCounter++;
             }
 
-            // 2. Query utama untuk menampilkan meja yang tersedia (sama seperti sebelumnya)
             $mejaTersedia = $conn->query("SELECT * FROM meja WHERE status = 'Tersedia' ORDER BY id_meja ASC");
             
             while ($row = $mejaTersedia->fetch_assoc()) :
-                // 3. Logika pembuatan label yang baru
-                $label = $row['nomor']; // Default label adalah nomor meja itu sendiri
+                $label = $row['nomor'];
 
                 if ($row['nomor'] == 11) {
-                    // Jika ini adalah meja nomor 11, cari sub-nomornya di peta
                     if (isset($petaIdKeSubNomor[$row['id_meja']])) {
                         $subNomor = $petaIdKeSubNomor[$row['id_meja']];
                         $label = '11-' . $subNomor;
                     }
                 }
             ?>
-                <option value="<?= $row['id_meja'] ?>"><?= htmlspecialchars($label) ?></option>
+                <option value="<?= $row['id_meja'] ?>" data-nomor="<?= $row['nomor'] ?>"> <?= htmlspecialchars($label) ?></option>
             <?php endwhile; ?>
-         </select>
+          </select>
 
           <h1 class="mb-2">Nama Pelanggan</h1>
           <input type="text" name="nama" placeholder="Nama Pelanggan" class="w-full p-2 mb-4 border rounded" required>
 
-          <h1 class="mb-2">Jumlah Pelanggan</h1>
-          <div class="flex justify-between items-center gap-2 mb-4">
+          <h1 id="judul-jumlah" class="mb-2">Jumlah Pelanggan</h1>
+          <div id="container-jumlah" class="flex justify-between items-center mb-4">
             <input type="button" value="1" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
             <input type="button" value="2" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
             <input type="button" value="3" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
-            <input type="number" id="jumlahCustom" placeholder="Custom" class="text-xl text-center border rounded-sm w-1/3 bg-gray-100" min="1">
+            <input type="button" value="4" class="btn-jumlah border text-xl rounded-sm w-1/6 bg-gray-300 cursor-pointer hover:bg-gray-400">
           </div>
 
           <input type="hidden" name="jumlah" id="jumlahValue" value="1" required>
@@ -212,66 +206,6 @@
   </div>
 
   <!-- JS -->
-  <script>
-    document.getElementById('Reservasi').addEventListener('click', function () {
-      document.getElementById('reservasiModal').classList.remove('hidden');
-      document.getElementById('main').classList.add('blur-sm');
-    });
-
-    window.addEventListener('click', function (event) {
-      const modal = document.getElementById('reservasiModal');
-      if (event.target === modal) {
-        modal.classList.add('hidden');
-        main.classList.remove('blur-sm');
-      }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      const jumlahButtons = document.querySelectorAll('.btn-jumlah');
-      const jumlahCustomInput = document.getElementById('jumlahCustom');
-      const hiddenJumlahInput = document.getElementById('jumlahValue');
-
-      // Tambahkan class untuk style tombol aktif
-      const activeClass = 'bg-blue-500 text-white';
-      const inactiveClass = 'bg-gray-300';
-      
-      // Beri tombol pertama style aktif sebagai default
-      if (jumlahButtons.length > 0) {
-          jumlahButtons[0].classList.add(...activeClass.split(' '));
-          jumlahButtons[0].classList.remove(...inactiveClass.split(' '));
-      }
-
-      // Event listener untuk tombol preset (1, 2, 3)
-      jumlahButtons.forEach(button => {
-          button.addEventListener('click', function() {
-              // Update nilai input tersembunyi
-              hiddenJumlahInput.value = this.value;
-
-              // Hapus nilai di input custom
-              jumlahCustomInput.value = '';
-
-              // Atur style tombol aktif
-              jumlahButtons.forEach(btn => {
-                  btn.classList.remove(...activeClass.split(' '));
-                  btn.classList.add(...inactiveClass.split(' '));
-              });
-              this.classList.add(...activeClass.split(' '));
-              this.classList.remove(...inactiveClass.split(' '));
-          });
-      });
-
-      // Event listener untuk input custom
-      jumlahCustomInput.addEventListener('input', function() {
-          // Update nilai input tersembunyi jika ada isinya, jika tidak default ke 1
-          hiddenJumlahInput.value = this.value || '1';
-
-          // Hapus style aktif dari semua tombol preset
-          jumlahButtons.forEach(btn => {
-              btn.classList.remove(...activeClass.split(' '));
-              btn.classList.add(...inactiveClass.split(' '));
-          });
-      });
-    });
-  </script>
+  <script src="<?= $base_url ?>/script/meja.js"></script>
 </body>
 </html>
