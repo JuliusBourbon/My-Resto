@@ -69,8 +69,8 @@
               return $currentPath === $path ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2';
           }
         ?>
-        <a href="<?= $base_url ?>/koki-menu" class="py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">List Menu</a>
         <a href="<?= $base_url ?>/list-pesanan" class="py-2 font-semibold transition <?= navActive('/My-Resto/list-pesanan') ?>">List Pesanan</a>
+        <a href="<?= $base_url ?>/koki-menu" class="py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">List Menu</a>
       </div>
     </nav>
 
@@ -108,13 +108,13 @@
                 <th>No</th><th>Meja</th><th>Nama</th><th>Detail</th><th>Waktu</th><th>Aksi</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="">
               <?php if (empty($pendingOrders)): ?>
                 <tr><td colspan="6" class="py-10 text-gray-500">Tidak ada pesanan pending saat ini.</td></tr>
               <?php else: ?>
                 <?php foreach ($pendingOrders as $index => $row): ?>
                   <tr class="border-b">
-                    <td><?= $index + 1 ?></td>
+                    <td class="py-5"><?= $index + 1 ?></td>
                     <td>Meja <?= $row['nomor_meja'] ?></td>
                     <td><?= htmlspecialchars($row['nama_pelanggan'] ?? 'Take Away') ?></td>
                     <td>
@@ -159,7 +159,7 @@
               <?php else: ?>
                 <?php foreach ($confirmedOrders as $index => $row): ?>
                   <tr class="border-b">
-                    <td><?= $index + 1 ?></td>
+                    <td class="py-5"><?= $index + 1 ?></td>
                     <td>Meja <?= $row['nomor_meja'] ?></td>
                     <td>
                       <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border px-4 py-1 rounded bg-gray-200 hover:bg-gray-300">Lihat Detail</button>

@@ -29,7 +29,7 @@ if (mysqli_num_rows($result) === 1) {
             header("Location: ../meja");
             break;
         case 'koki':
-            header("Location: ../koki-menu");
+            header("Location: ../list-pesanan");
             break;
         case 'kasir':
             header("Location: ../pembayaran");

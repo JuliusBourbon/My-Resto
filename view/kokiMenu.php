@@ -75,8 +75,8 @@
               return $currentPath === $path ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2';
           }
         ?>
-        <a href="<?= $base_url ?>/koki-menu" class="py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">List Menu</a>
         <a href="<?= $base_url ?>/list-pesanan" class="py-2 font-semibold transition <?= navActive('/My-Resto/list-pesanan') ?>">List Pesanan</a>
+        <a href="<?= $base_url ?>/koki-menu" class="py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">List Menu</a>
       </div>
     </nav>
 
@@ -94,7 +94,8 @@
           </div>
 
         <!-- Kategori -->
-        <div class="grid grid-cols-4 gap-5">
+        <h1 class=" text-center text-2xl font-semibold">Kategori</h1>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
           <?php while ($row = $kategori->fetch_assoc()) :
             $bgMap = [
               'Sarapan' => 'bg-[#C8F6BC]',
@@ -113,126 +114,91 @@
         <hr class="border-t border-gray-200" />
 
         <!-- Menu -->
-        <div id="menu-container" class="grid grid-cols-4 gap-5 overflow-y-auto pr-2"></div>
+        <h1 class=" text-center text-2xl font-semibold">Menu</h1>
+        <div class="flex justify-end gap-5">
+          <button id="tambahMenuBtn" type="button" class="py-3 px-4 text-xl font-bold text-blue-200 bg-blue-600 rounded-md hover:bg-blue-700 shadow-lg transition">Tambah Menu</button>
+        </div>
+        <div id="menu-container" class="grid grid-cols-2 lg:grid-cols-4 gap-5 overflow-y-auto pr-2"></div>
       </div>
     </main>
+
+    <div id="tambahMenuModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-opacity-50">
+      <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md transform transition-all">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Tambah Menu Baru</h2>
+          <form action="<?=$base_url?>/src/kokiMenuPost.php" method="POST">
+              <div class="mb-4">
+                  <label for="nama_menu" class="block text-gray-700 font-semibold mb-2">Nama Menu</label>
+                  <input type="text" id="nama_menu" name="nama" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+              </div>
+              <div class="mb-4">
+                  <label for="harga" class="block text-gray-700 font-semibold mb-2">Harga</label>
+                  <input type="number" id="harga" name="harga" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" required>
+              </div>
+              <div class="mb-6">
+                  <label for="id_kategori" class="block text-gray-700 font-semibold mb-2">Kategori</label>
+                  <select id="id_kategori" name="id_kategori" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                      <option value="" disabled selected>Pilih Kategori</option>
+                      <?php foreach ($kategori as $kat) : ?>
+                          <option value="<?= htmlspecialchars($kat['id_kategori']) ?>"><?= htmlspecialchars($kat['nama_kategori']) ?></option>
+                      <?php endforeach; ?>
+                  </select>
+              </div>
+              <input type="hidden" name="status_ketersediaan" value="Tersedia">
+              <div class="flex justify-end gap-4">
+                  <button type="button" class="modal-close-btn py-2 px-6 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400 transition">Batal</button>
+                  <button type="submit" class="py-2 px-6 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition">Simpan</button>
+              </div>
+          </form>
+      </div>
+    </div>
+
+    <div id="konfirmasiHapusModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-opacity-60">
+      <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-sm text-center transform transition-all">
+          <h3 class="text-xl font-bold mb-4">Hapus Menu</h3>
+          <p class="text-gray-600 mb-6">
+              Apakah Anda yakin ingin menghapus menu <br> "<strong id="namaMenuHapus" class="text-red-600"></strong>"?
+          </p>
+          <form id="formHapusMenu" action="<?=$base_url?>/src/kokiMenuHapus.php" method="POST">
+              <input type="hidden" name="id_menu" id="idMenuHapus">
+              <div class="flex justify-center gap-4">
+                  <button type="button" id="batalHapusBtn" class="py-2 px-6 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400 transition">Batal</button>
+                  <button type="submit" class="py-2 px-6 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition">Ya, Hapus</button>
+              </div>
+          </form>
+      </div>
+    </div>
+    <div id="updateMenuModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-opacity-50">
+      <div class="bg-white p-8 rounded-lg shadow-2xl w-full max-w-md transform transition-all">
+        <h2 class="text-2xl font-bold mb-6 text-gray-800">Update Menu</h2>
+        
+        <form action="<?=$base_url?>/src/kokiMenuEdit.php" method="POST">
+            <input type="hidden" name="action" value="update_menu">
+            <input type="hidden" name="id_menu" id="update_id_menu">
+
+            <div class="mb-4">
+                <label for="update_nama_menu" class="block text-gray-700 font-semibold mb-2">Nama Menu</label>
+                <input type="text" id="update_nama_menu" name="nama" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+            </div>
+
+            <div class="mb-6">
+                <label for="update_harga" class="block text-gray-700 font-semibold mb-2">Harga</button>
+                <input type="number" id="update_harga" name="harga" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" min="0" required>
+            </div>
+
+            <div class="flex justify-end gap-4">
+                <button type="button" class="modal-close-btn py-2 px-6 bg-gray-300 text-gray-800 font-semibold rounded-md hover:bg-gray-400 transition">Batal</button>
+                <button type="submit" class="py-2 px-6 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition">Simpan Perubahan</button>
+            </div>
+        </form>
+      </div>
+    </div>
   </div>
+
 
   <!-- JS -->
   <script>
-    let selectedKategori = null;
-
-    function updateMenuContainer(data) {
-      const container = document.querySelector('#menu-container');
-      container.innerHTML = '';
-
-      const bgMap = {
-        'Sarapan': 'bg-[#C8F6BC]',
-        'Hidangan Utama': 'bg-[#FFD27E]',
-        'Minuman': 'bg-[#A2F9FF]',
-        'Penutup': 'bg-[#FEC0FF]'
-      };
-
-      data.forEach(item => {
-        const bg = bgMap[item.nama_kategori] || 'bg-gray-200';
-
-        const el = document.createElement('div');
-        el.className = `menu-item p-8 rounded-lg flex flex-col justify-between shadow-sm h-full ${bg}`;
-        el.dataset.id_menu = item.id_menu;
-
-        el.innerHTML = `
-          <div class="flex flex-col items-center justify-center gap-2">
-            <h3 class="font-bold text-gray-800 text-xl">${item.nama}</h3>
-            <p class="text-lg text-gray-700 font-medium">Rp${parseInt(item.harga).toLocaleString('id-ID')}</p>
-            <form method="POST" action="">
-              <input type="hidden" name="id_menu" value="${item.id_menu}">
-              <select name="status_ketersediaan" onchange="this.form.submit()" class="bg-white border border-gray-300 rounded px-2 py-1 text-md shadow hover:border-blue-400 transition focus:outline-none">
-                <option value="Tersedia" ${item.status_ketersediaan === 'Tersedia' ? 'selected' : ''}>Tersedia</option>
-                <option value="Tidak Tersedia" ${item.status_ketersediaan === 'Tidak Tersedia' ? 'selected' : ''}>Tidak Tersedia</option>
-              </select>
-            </form>
-          </div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    function fetchMenu(kategoriId = null) {
-      let url = "<?= $base_url ?>/src/menuFiltered.php";
-      if (kategoriId) url += `?kategori_id=${kategoriId}`;
-
-      fetch(url)
-        .then(res => res.json())
-        .then(data => {
-          updateMenuContainer(data);
-        });
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      fetchMenu();
-
-      document.querySelectorAll(".kategori-btn").forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.dataset.kategori;
-          const previouslySelected = selectedKategori;
-
-          selectedKategori = selectedKategori === id ? null : id;
-
-          document.querySelectorAll(".kategori-btn").forEach(b => {
-            b.classList.remove("border-1", "text-black");
-            b.classList.add("text-gray-700");
-          });
-
-          if (selectedKategori !== null) {
-            btn.classList.add("border-1", "text-black");
-            btn.classList.remove("text-gray-700");
-          }
-
-          fetchMenu(selectedKategori);
-        };
-      });
-    });
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const searchInput = document.getElementById('searchInput');
-      const menuContainer = document.getElementById('menu-container');
-
-      searchInput.addEventListener('input', () => {
-          const searchTerm = searchInput.value.toLowerCase();
-          const menuItems = menuContainer.querySelectorAll('.menu-item');
-
-          menuItems.forEach(item => {
-              const menuName = item.querySelector('h3').textContent.toLowerCase();
-
-              if (menuName.includes(searchTerm)) {
-                  item.style.display = 'flex'; 
-              } else {
-                  item.style.display = 'none'; 
-              }
-          });
-      });
-
-      document.querySelectorAll(".kategori-btn").forEach(btn => {
-        btn.onclick = () => {
-          const id = btn.dataset.kategori;
-          const previouslySelected = selectedKategori;
-
-          selectedKategori = selectedKategori === id ? null : id;
-
-          document.querySelectorAll(".kategori-btn").forEach(b => {
-            b.classList.remove("border-1", "text-black");
-            b.classList.add("text-gray-700");
-          });
-
-          if (selectedKategori !== null) {
-            btn.classList.add("border-1", "text-black");
-            btn.classList.remove("text-gray-700");
-          }
-
-          fetchMenu(selectedKategori);
-        };
-      });
-    });
+    const BASE_URL = "<?= $base_url ?>";
   </script>
+  <script src="<?= $base_url ?>/script/kokiMenu.js"></script>
 </body>
 </html>
