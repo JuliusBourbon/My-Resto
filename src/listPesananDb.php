@@ -13,6 +13,7 @@ $queryPending = $conn->query("
     FROM pesanan p
     JOIN meja m ON p.id_meja = m.id_meja
     WHERE p.status = 'Pending'
+    
     ORDER BY p.waktu_pesan ASC
 ");
 if ($queryPending) {

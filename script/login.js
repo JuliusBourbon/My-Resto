@@ -18,4 +18,31 @@ document.addEventListener('DOMContentLoaded', function () {
             eyeSlashedIcon.classList.toggle('hidden');
         });
     }
+
+    const errorPopup = document.getElementById('error-popup');
+    const closePopupButton = document.getElementById('close-popup');
+
+    // Cek jika pop-up ada di halaman
+    if (errorPopup) {
+        // Tampilkan pop-up
+        errorPopup.style.display = 'flex';
+
+        // Sembunyikan pop-up setelah 5 detik
+        setTimeout(() => {
+            errorPopup.style.opacity = '0';
+            setTimeout(() => {
+                if (errorPopup) errorPopup.style.display = 'none';
+            }, 300); // Waktu ini harus sama dengan durasi transisi
+        }, 5000);
+
+        // Tambahkan event listener untuk tombol close
+        if (closePopupButton) {
+            closePopupButton.addEventListener('click', function() {
+                errorPopup.style.opacity = '0';
+                setTimeout(() => {
+                    if (errorPopup) errorPopup.style.display = 'none';
+                }, 300);
+            });
+        }
+    }
 });

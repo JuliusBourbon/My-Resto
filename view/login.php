@@ -22,21 +22,32 @@
 </head>
 <body class="font-sans bg-white w-screen h-screen overflow-hidden">
     <div class="flex flex-col md:flex-row w-screen h-screen">
-
+        
         <!-- Form Section -->
         <div class="w-full md:w-1/2 flex justify-center items-center relative">
             <div class="w-full max-w-md">
-
+                
                 <!-- Logo -->
                 <div class="flex justify-center items-center mb-24">
                     <img src="<?= $base_url ?>/img/myresto_icon.jpg" alt="My Resto Logo" class="h-1/2 w-1/2">
                 </div>
-
+                
+                
                 <!-- Header -->
                 <div class="text-center mb-8">
                     <h1 class="text-2xl font-bold text-gray-800 mb-2">Login</h1>
                     <p class="text-gray-500">Selamat datang di MyResto<br>Sistem Pelayanan Restoran Unikom</p>
                 </div>
+                
+                <?php if (isset($_GET['error'])): ?>
+                    <div id="error-popup" class="mb-5 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg z-50 flex items-center transition-opacity duration-300">
+                        <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        <span class="block sm:inline">Login gagal, email atau password salah.</span>
+                        <button id="close-popup" class="ml-4 text-red-500 hover:text-red-800">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </div>
+                <?php endif; ?>
 
                 <!-- Form -->
                 <form action="<?= $base_url ?>/src/loginDb.php" method="POST">

@@ -40,6 +40,7 @@ if (mysqli_num_rows($result) === 1) {
     }
     exit();
 } else {
-    echo "<script>alert('Login gagal: email atau password salah'); window.location.href = '../login';</script>";
+    header("Location: ../login?error=1");
+    exit();
 }
 ?>
