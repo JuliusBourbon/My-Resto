@@ -113,7 +113,27 @@
             <div class="w-full flex items-center justify-center gap-5">
               <div class="w-30 h-30 rounded-full flex items-center justify-center <?= $row['status'] === 'Tersedia' ? 'bg-green-300' : 'bg-red-400'; ?>">
                 <h1 class="text-center">
-                  <?= $row['nomor'] ?> <br> <?= $row['status'] ?>
+                  <?= $row['nomor'] ?> <br> 
+                  <?= $row['status'] ?> <br> 
+                  <?php if (!empty($row['nama'])) : ?>
+                    by
+                    <div class="text-white font-semibold">
+                        <?php
+                        $nama_lengkap = $row['nama'];
+                        
+                        // Cek jika panjang nama lebih dari 7 karakter
+                        if (strlen($nama_lengkap) > 7) {
+                            // Ambil 7 karakter pertama, lalu tambahkan "..."
+                            $nama_tampil = substr($nama_lengkap, 0, 7) . '...';
+                        } else {
+                            // Jika tidak, tampilkan nama lengkap
+                            $nama_tampil = $nama_lengkap;
+                        }
+                        
+                        echo htmlspecialchars($nama_tampil);
+                        ?>
+                    </div>
+                  <?php endif; ?>
                 </h1>
               </div>
             </div>

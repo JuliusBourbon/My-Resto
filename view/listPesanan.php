@@ -69,8 +69,19 @@
               return $currentPath === $path ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2';
           }
         ?>
-        <a href="<?= $base_url ?>/list-pesanan" class="py-2 font-semibold transition <?= navActive('/My-Resto/list-pesanan') ?>">List Pesanan</a>
-        <a href="<?= $base_url ?>/koki-menu" class="py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">List Menu</a>
+
+        <a href="<?= $base_url ?>/list-pesanan" class="flex gap-3 py-2 font-semibold transition <?= navActive('/My-Resto/list-pesanan') ?>">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" />
+          </svg>
+          List Pesanan
+        </a>
+        <a href="<?= $base_url ?>/koki-menu" class="flex gap-3 py-2 font-semibold transition <?= navActive('/My-Resto/koki-menu') ?>">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          List Menu
+        </a>
       </div>
     </nav>
 

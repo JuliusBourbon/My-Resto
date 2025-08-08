@@ -1,7 +1,19 @@
 <?php
 require_once __DIR__ . '/connection.php';
 
-$meja = $conn->query("SELECT * FROM meja WHERE nomor != 11");
+$nama = $conn->query("SELECT nama FROM pesanan WHERE status != 'Served' AND status != 'Selesai'");
+$meja = $conn->query("
+    SELECT 
+        m.id_meja, m.nomor, m.status, p.nama AS nama
+    FROM 
+        meja m
+    LEFT JOIN 
+        pesanan p ON m.id_meja = p.id_meja AND p.status != 'Selesai' AND p.status != 'Served' 
+    WHERE 
+        m.nomor != 11
+    ORDER BY
+        m.id_meja ASC
+");
 $mejaTersedia = $conn->query("SELECT * FROM meja WHERE status = 'Tersedia'");
 $meja11 = $conn->query("SELECT * FROM meja WHERE nomor = 11");
 
@@ -9,48 +21,36 @@ $counter = 1;
 $counter11 = 1;
 
 $tersedia = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Tersedia'")->fetch_assoc()['total'];
-$penuh     = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reservasi'")->fetch_assoc()['total'];
+$penuh     = $conn->query("SELECT COUNT(*) AS total FROM meja WHERE status = 'Reserved'")->fetch_assoc()['total'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Pastikan semua data yang dibutuhkan ada
     if (isset($_POST['id_meja'], $_POST['nama'], $_POST['jumlah'])) {
         
-        // 1. Langsung ambil id_meja dari form. Tidak perlu query lagi.
         $id_meja        = (int) $_POST['id_meja'];
         $nama_pelanggan = $_POST['nama'];
         $jumlah         = (int) $_POST['jumlah'];
 
-        // Pastikan id_meja valid (lebih dari 0)
         if ($id_meja > 0) {
-            // Mulai transaksi untuk memastikan konsistensi data
             $conn->begin_transaction();
             try {
-                // 2. Insert ke tabel pesanan menggunakan id_meja yang sudah didapat
                 $stmtPesanan = $conn->prepare(
                     "INSERT INTO pesanan (id_meja, id_pelayan, waktu_pesan, status, nama, jumlah_pelanggan)
                      VALUES (?, 1, NOW(), 'Reservasi', ?, ?)"
                 );
-                // Bind parameter 'isi' -> integer, string, integer
                 $stmtPesanan->bind_param("isi", $id_meja, $nama_pelanggan, $jumlah);
                 $stmtPesanan->execute();
 
-                // 3. Update status meja menjadi 'Reserved' atau 'Reservasi' (sesuaikan dengan sistem Anda)
-                // Di query status Anda adalah 'Reservasiz', tapi di sini 'Reserved'. Mari kita samakan.
                 $stmtUpdateMeja = $conn->prepare("UPDATE meja SET status = 'Reserved' WHERE id_meja = ?");
                 $stmtUpdateMeja->bind_param("i", $id_meja);
                 $stmtUpdateMeja->execute();
 
-                // Jika semua berhasil, commit transaksi
                 $conn->commit();
                 
-                header("Location: /My-Resto/meja"); // Pastikan path ini benar
+                header("Location: /My-Resto/meja"); 
                 exit;
 
             } catch (Exception $e) {
-                // Jika ada error, batalkan semua perubahan
                 $conn->rollback();
-                // Opsional: Log error untuk debugging
-                // error_log("Transaksi gagal: " . $e->getMessage());
                 header("Location: /My-Resto/meja?error=1");
                 exit;
             }

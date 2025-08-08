@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
             fetch(`${BASE_URL}/src/submitPesanan.php`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan })
+                body: JSON.stringify({ id_meja: parseInt(nomorMeja), pesanan })
             })
             .then(res => res.json())
             .then(res => {

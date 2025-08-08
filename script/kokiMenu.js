@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div class="flex justify-between mt-2">
                     <div class="flex flex-col">
                         <div class="flex justify-center">
-                            <button class="edit-menu-btn text-gray-400 hover:text-blue-600 transition" 
+                            <button class="edit-menu-btn text-gray-500 hover:text-blue-600 transition" 
                                     data-id="${item.id_menu}"
                                     data-nama="${item.nama}"
                                     data-harga="${item.harga}">
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                     <div class="flex flex-col">
                         <div class="flex justify-center">
-                            <button class="hapus-menu-btn text-gray-400 hover:text-red-600 transition" 
+                            <button class="hapus-menu-btn text-gray-500 hover:text-red-600 transition" 
                                     data-id="${item.id_menu}" 
                                     data-nama="${item.nama}">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
