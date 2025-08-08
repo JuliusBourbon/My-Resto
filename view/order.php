@@ -60,25 +60,28 @@
         </div>
       </div>
 
-        <div class="px-10 flex gap-10">
-          <div class="flex items-center gap-6 pt-1">
-              <a href="<?= $base_url ?>/meja"
-              class="py-2 font-semibold transition <?= $currentPath === '/My-Resto/meja' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
-              Meja
-              </a>
-          </div>
-          <div class="flex items-center gap-6 pt-1">
-              <a href="<?= $base_url ?>/order"
-              class="py-2 font-semibold transition <?= $currentPath === '/My-Resto/order' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
-              Pesanan
-              </a>
-          </div>
-          <div class="flex items-center gap-6 pt-1">
-              <a href="<?= $base_url ?>/notifikasi"
-              class="py-2 font-semibold transition <?= $currentPath === '/My-Resto/notifikasi' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
-              Notifikasi
-              </a>
-          </div>
+      <div class="px-10 flex gap-10">
+        <div class="flex items-center gap-6 pt-1">
+          <a href="<?= $base_url ?>/meja" class=" flex gap-3 py-2 font-semibold transition <?= $currentPath === '/My-Resto/meja' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m16 7l2 9M8 7l-2 9M5 7h14m2 5H3"/></svg>
+            Meja
+          </a>
+        </div>
+        <div class="flex items-center gap-6 pt-1">
+          <a href="<?= $base_url ?>/order" class="flex gap-3 py-2 font-semibold transition <?= $currentPath === '/My-Resto/order' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m17.275 18.125l-.425-.425q-.225-.225-.537-.225t-.538.225t-.225.525t.225.525l.975.975q.225.225.525.225t.525-.225l2.425-2.375q.225-.225.225-.538t-.225-.537t-.538-.225t-.537.225zM17 9q.425 0 .713-.288T18 8t-.288-.712T17 7H7q-.425 0-.712.288T6 8t.288.713T7 9zm1 14q-2.075 0-3.537-1.463T13 18t1.463-3.537T18 13t3.538 1.463T23 18t-1.463 3.538T18 23M3 21.875V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v5.5q0 .425-.35.688t-.775.137q-.7-.175-1.425-.25T17 11H7q-.425 0-.712.288T6 12t.288.713T7 13h6.1q-.425.425-.787.925T11.675 15H7q-.425 0-.712.288T6 16t.288.713T7 17h4.075q-.05.25-.062.488T11 18q0 .65.125 1.275t.325 1.25q.125.275-.1.438t-.425-.038l-.075-.075q-.15-.15-.35-.15t-.35.15l-.8.8q-.15.15-.35.15t-.35-.15l-.8-.8q-.15-.15-.35-.15t-.35.15l-.8.8q-.15.15-.35.15t-.35-.15l-.8-.8q-.15-.15-.35-.15t-.35.15l-.8.8z"/></svg>
+          Pesanan
+          </a>
+        </div>
+        <div class="flex items-center gap-6 pt-1">
+          <a href="<?= $base_url ?>/notifikasi" class="flex gap-3 py-2 font-semibold transition <?= $currentPath === '/My-Resto/notifikasi' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+              <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
+              <path fill-rule="evenodd" d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z" clip-rule="evenodd" />
+            </svg>
+          Notifikasi
+          </a>
+        </div>
       </div>
     </nav>
 
@@ -95,10 +98,11 @@
           </div>
           
           <input type="text" id="searchInput" placeholder="Cari menu..." class="w-full bg-white pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
+        </div>
 
         <!-- Kategori -->
-        <div class="grid grid-cols-4 gap-5">
+        <h1 class=" text-center text-2xl font-semibold">Kategori</h1>
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-5">
           <?php while ($row = $kategori->fetch_assoc()) :
             $bgMap = [
               'Sarapan' => 'bg-[#C8F6BC]',
@@ -117,16 +121,17 @@
         <hr class="border-t border-gray-200" />
 
         <!-- Daftar Menu -->
-        <div id="menu-container" class="grid grid-cols-4 gap-5 overflow-y-auto pr-2"></div>
+         <h1 class=" text-center text-2xl font-semibold">Menu</h1>
+        <div id="menu-container" class="grid grid-cols-2 lg:grid-cols-4 gap-5 overflow-y-auto pr-2"></div>
       </div>
 
       <!-- Kanan: Ringkasan Order -->
       <div class="w-[35%] flex justify-center items-start pt-10">
         <div class="bg-white rounded-xl shadow-lg p-6 flex flex-col w-3/4">
           <form method="GET" class="w-full flex flex-col">
-            <label class="block font-semibold mb-2 text-center">Pilih Meja</label>
+            <label class="block font-semibold mb-2 text-center text-xl">Pilih Meja</label>
             <select name="meja" class="w-full p-2 mb-4 border rounded" onchange="this.form.submit()" required>
-              <option value="">-- Pilih Meja --</option>
+              <option value="">Pilih Meja</option>
               <?php
               mysqli_data_seek($mejaReserved, 0); // Reset pointer loop jika diperlukan
                 while ($row = $mejaReserved->fetch_assoc()) :
@@ -169,211 +174,15 @@
 
     <div id="alertModal" class="fixed inset-0 flex items-center justify-center z-50 hidden">
       <div class="bg-white p-6 rounded-lg shadow-md max-w-sm text-center">
-        <p id="alertMessage" class="text-gray-800 mb-4">Pesan alert di sini</p>
+        <p id="alertMessage" class="text-gray-800 mb-4"></p>
         <button id="closeAlert" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">OK</button>
       </div>
     </div>
   </div>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  const alertModal = document.getElementById('alertModal');
-  const alertMessage = document.getElementById('alertMessage');
-  const closeAlert = document.getElementById('closeAlert');
-  const searchInput = document.getElementById('searchInput');
-  const menuContainer = document.getElementById('menu-container');
-  const confirmBtn = document.querySelector(".konfirmasi-btn");
-  const profileIcon = document.getElementById('profileIcon');
-  const dropdownMenu = document.getElementById('dropdownMenu');
-
-  let selectedQuantities = {};
-  let allMenuItems = {};
-  let selectedKategori = null;
-
-  // Show Custom Alert
-  function showCustomAlert(message) {
-    if (alertMessage && alertModal) {
-      alertMessage.textContent = message;
-      alertModal.classList.remove('hidden');
-    }
-  }
-
-  // Close Alert Modal
-  if (closeAlert) {
-    closeAlert.addEventListener('click', () => {
-      alertModal.classList.add('hidden');
-    });
-  }
-
-  // Profile Dropdown Toggle
-  if (profileIcon && dropdownMenu) {
-    profileIcon.addEventListener('click', () => {
-      dropdownMenu.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', function (e) {
-      if (!profileIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-        dropdownMenu.classList.add('hidden');
-      }
-    });
-  }
-
-  // Update Summary
-  function updateOrderSummary() {
-    const container = document.getElementById("summary-items");
-    const totalEl = document.getElementById("total-harga");
-    container.innerHTML = '';
-    let total = 0;
-
-    for (const id in selectedQuantities) {
-      const qty = selectedQuantities[id];
-      if (qty > 0) {
-        const item = allMenuItems[id];
-        const subtotal = item.harga * qty;
-        total += subtotal;
-        container.innerHTML += `
-          <div class="flex justify-between">
-            <span>${item.nama} x ${qty}</span>
-            <span>Rp${subtotal.toLocaleString('id-ID')}</span>
-          </div>`;
-      }
-    }
-
-    totalEl.textContent = 'Rp' + total.toLocaleString('id-ID');
-  }
-
-  // Bind + / - Button
-  function bindQuantityButtons() {
-    document.querySelectorAll(".quantity-btn").forEach(btn => {
-      btn.onclick = () => {
-        const input = btn.parentElement.querySelector(".quantity");
-        const id = btn.closest(".menu-item").dataset.id_menu;
-        let val = parseInt(input.value);
-        val = btn.classList.contains("plus") ? val + 1 : Math.max(val - 1, 0);
-        input.value = val;
-        selectedQuantities[id] = val;
-        updateOrderSummary();
-      };
-    });
-
-    document.querySelectorAll(".quantity").forEach(input => {
-      input.addEventListener('input', () => {
-        const id = input.closest(".menu-item").dataset.id_menu;
-        let val = parseInt(input.value);
-        selectedQuantities[id] = isNaN(val) || val < 0 ? 0 : val;
-        updateOrderSummary();
-      });
-    });
-  }
-
-  // Update Menu Cards
-  function updateMenu(data) {
-    menuContainer.innerHTML = '';
-    data.forEach(item => {
-      allMenuItems[item.id_menu] = { nama: item.nama, harga: parseInt(item.harga) };
-      const qty = selectedQuantities[item.id_menu] || 0;
-      const bgMap = {
-        'Sarapan': 'bg-[#C8F6BC]', 'Hidangan Utama': 'bg-[#FFD27E]',
-        'Minuman': 'bg-[#A2F9FF]', 'Penutup': 'bg-[#FEC0FF]'
-      };
-      const bg = item.status_ketersediaan === 'Tersedia' ? (bgMap[item.nama_kategori] || 'bg-gray-200') : 'opacity-60 bg-gray-300';
-
-      menuContainer.innerHTML += `
-        <div class="menu-item p-4 rounded-lg flex flex-col justify-between shadow-sm h-36 ${bg}" data-id_menu="${item.id_menu}">
-          <div class="flex-grow">
-            <h3 class="font-bold text-xl">${item.nama}</h3>
-            <p class="font-semibold text-lg">Rp${new Intl.NumberFormat('id-ID').format(item.harga)}</p>
-          </div>
-          ${item.status_ketersediaan === 'Tersedia' ? `
-          <div class="flex items-center justify-center gap-2 mt-2">
-            <button class="quantity-btn minus bg-white p-1 rounded w-7 h-7">-</button>
-            <input class="quantity text-center w-10" value="${qty}" min="0">
-            <button class="quantity-btn plus bg-white p-1 rounded w-7 h-7">+</button>
-          </div>` : `<p class="text-center mt-4 font-bold text-gray-600">Tidak Tersedia</p>`}
-        </div>`;
-    });
-
-    bindQuantityButtons();
-  }
-
-  // Fetch Menu
-  function fetchMenu(kategoriId = null) {
-    let url = "<?= $base_url ?>/src/menuFiltered.php";
-    if (kategoriId) url += `?kategori_id=${kategoriId}`;
-
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        updateMenu(data);
-        updateOrderSummary();
-      });
-  }
-
-  // Kategori Filter
-  document.querySelectorAll(".kategori-btn").forEach(btn => {
-    btn.onclick = () => {
-      const id = btn.dataset.kategori;
-      selectedKategori = selectedKategori === id ? null : id;
-
-      document.querySelectorAll(".kategori-btn").forEach(b => {
-        b.classList.remove("border-1", "text-black");
-        b.classList.add("text-gray-700");
-      });
-
-      if (selectedKategori !== null) {
-        btn.classList.add("border-1", "text-black");
-        btn.classList.remove("text-gray-700");
-      }
-
-      fetchMenu(selectedKategori);
-    };
-  });
-
-  // Search Menu
-  if (searchInput && menuContainer) {
-    searchInput.addEventListener('input', () => {
-      const searchTerm = searchInput.value.toLowerCase();
-      const menuItems = menuContainer.querySelectorAll('.menu-item');
-
-      menuItems.forEach(item => {
-        const menuName = item.querySelector('h3').textContent.toLowerCase();
-        item.style.display = menuName.includes(searchTerm) ? 'flex' : 'none';
-      });
-    });
-  }
-
-  // Konfirmasi Pesanan
-  if (confirmBtn) {
-    confirmBtn.addEventListener('click', () => {
-      const nomorMeja = document.querySelector("select[name='meja']").value;
-      if (!nomorMeja) return showCustomAlert("Pilih meja terlebih dahulu.");
-
-      const pesanan = Object.entries(selectedQuantities)
-        .filter(([, qty]) => qty > 0)
-        .map(([id_menu, jumlah]) => ({ id_menu: parseInt(id_menu), jumlah }));
-
-      if (pesanan.length === 0) return showCustomAlert("Pesanan kosong.");
-
-      fetch("<?= $base_url ?>/src/submitPesanan.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ nomor_meja: parseInt(nomorMeja), pesanan })
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          showCustomAlert("Pesanan berhasil!");
-          window.location.reload();
-        } else {
-          showCustomAlert("Gagal menyimpan: " + res.message);
-        }
-      });
-    });
-  }
-
-  // Init
-  fetchMenu();
-});
-</script>
+  <script>
+    const BASE_URL = "<?= $base_url ?>";
+  </script>
+  <script src="<?= $base_url ?>/script/order.js"></script>
 </body>
 </html>
