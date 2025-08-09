@@ -8,7 +8,7 @@ $meja = $conn->query("
     FROM 
         meja m
     LEFT JOIN 
-        pesanan p ON m.id_meja = p.id_meja AND p.status != 'Selesai' AND p.status != 'Served' 
+        pesanan p ON m.id_meja = p.id_meja AND p.status != 'Selesai' AND p.status != 'Lunas' 
     WHERE 
         m.nomor != 11
     ORDER BY

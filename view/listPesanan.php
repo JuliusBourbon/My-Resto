@@ -124,9 +124,20 @@
                 <tr><td colspan="6" class="py-10 text-gray-500">Tidak ada pesanan pending saat ini.</td></tr>
               <?php else: ?>
                 <?php foreach ($pendingOrders as $index => $row): ?>
+                  <?php
+                    $label_meja = '';
+                    if ($row['nomor_meja'] == 11) {
+                        $sub_nomor = $row['id_meja'] % 10; 
+                        if ($sub_nomor === 0) $sub_nomor = 10; 
+                        
+                        $label_meja = '11-' . $sub_nomor;
+                    } else {
+                        $label_meja = $row['nomor_meja'];
+                    }
+                  ?>
                   <tr class="border-b">
                     <td class="py-5"><?= $index + 1 ?></td>
-                    <td>Meja <?= $row['nomor_meja'] ?></td>
+                    <td>Meja <?= htmlspecialchars($label_meja) ?></td> 
                     <td><?= htmlspecialchars($row['nama_pelanggan'] ?? 'Take Away') ?></td>
                     <td>
                       <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border px-4 py-1 rounded bg-gray-200 hover:bg-gray-300">Lihat Detail</button>
@@ -169,9 +180,20 @@
                 <tr><td colspan="5" class="py-10 text-gray-500">Tidak ada pesanan disiapkan.</td></tr>
               <?php else: ?>
                 <?php foreach ($confirmedOrders as $index => $row): ?>
+                  <?php
+                    $label_meja = '';
+                    if ($row['nomor_meja'] == 11) {
+                        $sub_nomor = $row['id_meja'] % 10; 
+                        if ($sub_nomor === 0) $sub_nomor = 10; 
+                        
+                        $label_meja = '11-' . $sub_nomor;
+                    } else {
+                        $label_meja = $row['nomor_meja'];
+                    }
+                  ?>
                   <tr class="border-b">
                     <td class="py-5"><?= $index + 1 ?></td>
-                    <td>Meja <?= $row['nomor_meja'] ?></td>
+                    <td>Meja <?= htmlspecialchars($label_meja) ?></td>
                     <td>
                       <button onclick="tampilkanDetail(<?= $row['id_pesanan'] ?>)" class="border px-4 py-1 rounded bg-gray-200 hover:bg-gray-300">Lihat Detail</button>
                     </td>

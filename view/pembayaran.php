@@ -58,8 +58,17 @@
             </div>
             <div class="px-10 flex gap-10">
                 <a href="<?= $base_url ?>/pembayaran"
-                    class="py-2 font-semibold transition <?= $currentPath === '/My-Resto/pembayaran' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+                    class="flex gap-3 py-2 font-semibold transition <?= $currentPath === '/My-Resto/pembayaran' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+                    </svg>
+
                     Pembayaran
+                </a>
+                <a href="<?= $base_url ?>/histori"
+                    class="flex gap-3 py-2 font-semibold transition <?= $currentPath === '/My-Resto/histori' ? 'text-blue-700 border-b-2 border-blue-700' : 'text-gray-500 hover:border-b-2' ?>">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-history-icon lucide-history"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+                    Histori
                 </a>
             </div>
         </nav>
@@ -79,18 +88,19 @@
                 </div>
 
                 <!-- Grid Pesanan -->
-                <div id="order-grid" class="grid grid-cols-4 gap-5 overflow-y-auto pr-2">
+                <div id="order-grid" class="grid grid-cols-4 gap-5 overflow-y-auto pr-2 h-2/9">
                     <?php if (!empty($orders)): ?>
                         <?php foreach ($orders as $order): ?>
-                            <div class="order-card bg-white p-4 rounded-lg flex flex-col justify-between shadow-sm border border-gray-200 h-36"
+                            <div class="order-card bg-white p-4 rounded-lg flex flex-col justify-between shadow-sm border border-gray-200"
                                 data-order-id="<?= $order['id_pesanan'] ?>">
-                                <div class="text-center">
-                                    <h3 class="font-bold text-gray-800">
-                                        Order <?= $order['id_pesanan'] ?> - Meja <?= htmlspecialchars($order['nama_pelanggan']) ?>
+                                <div class="text-center flex flex-col m-5">
+                                    <h3 class="font-bold text-xl text-gray-800">
+                                        Order <?= $order['id_pesanan'] ?> - Meja <?= htmlspecialchars($order['nomor_meja']) ?>
                                     </h3>
+                                    <h1 class="text-xl font-semibold"><?= htmlspecialchars($order['nama_pelanggan']) ?></h1>
                                 </div>
-                                <div class="mt-auto">
-                                    <button class="detail-button w-full bg-[#D9F3E4] text-gray-800 font-semibold py-2 rounded-lg hover:bg-[#c8e6d5] transition-colors"
+                                <div class="">
+                                    <button class="detail-button w-full text-lg bg-[#D9F3E4] text-gray-800 font-semibold py-2 rounded-lg hover:bg-[#c8e6d5] transition-colors"
                                             data-order-id="<?= $order['id_pesanan'] ?>">
                                         Detail
                                     </button>
@@ -200,188 +210,9 @@
     
 
 
-<script>
-    const baseUrl = "<?= $base_url ?>";
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // --- ELEMEN DOM ---
-        const orderDetailContainer = document.getElementById('order-detail-container');
-        const orderDetailPlaceholder = document.getElementById('order-detail-placeholder');
-        const paymentModal = document.getElementById('payment-modal');
-        const customModal = document.getElementById('customModal');
-        const modalTitle = document.getElementById('modalTitle');
-        const modalMessage = document.getElementById('modalMessage');
-        let modalConfirmBtn = document.getElementById('modalConfirmBtn'); // Pakai let
-        const modalCancelBtn = document.getElementById('modalCancelBtn');
-        const searchInput = document.getElementById('searchInput');
-        const orderGrid = document.getElementById('order-grid');
-
-        // --- STATE ---
-        let currentOrderData = null;
-        let activeCard = null;
-
-        // --- FUNGSI BANTUAN ---
-        const rupiah = (value) => `Rp${new Intl.NumberFormat('id-ID').format(value)}`;
-        const escapeHTML = (str) => {
-            const p = document.createElement('p');
-            p.textContent = str;
-            return p.innerHTML;
-        };
-
-        function showModal(title, message, type = 'alert', onConfirm = null) {
-            modalTitle.textContent = title;
-            modalMessage.textContent = message;
-
-            const newConfirmBtn = modalConfirmBtn.cloneNode(true);
-            modalConfirmBtn.parentNode.replaceChild(newConfirmBtn, modalConfirmBtn);
-            modalConfirmBtn = newConfirmBtn;
-            
-            if (type === 'confirm') {
-                modalConfirmBtn.textContent = 'Ya, Lanjutkan';
-                modalCancelBtn.style.display = 'inline-block';
-                modalConfirmBtn.style.display = 'inline-block';
-                modalConfirmBtn.onclick = () => {
-                    if (onConfirm) onConfirm();
-                    customModal.classList.add('hidden');
-                };
-                modalCancelBtn.onclick = () => customModal.classList.add('hidden');
-            } else {
-                modalConfirmBtn.textContent = 'OK';
-                modalCancelBtn.style.display = 'none';
-                modalConfirmBtn.style.display = 'inline-block';
-                modalConfirmBtn.onclick = () => {
-                    if (onConfirm) onConfirm();
-                    customModal.classList.add('hidden');
-                };
-            }
-            customModal.classList.remove('hidden');
-            customModal.classList.add('flex');
-        }
-
-        function updateDetailColumn(data) {
-            orderDetailPlaceholder.classList.add('hidden');
-            const detailHTML = `
-                <h2 class="text-xl font-bold text-gray-800 text-center mb-2">Detail Order</h2>
-                <span class="text-md font-medium text-gray-600 text-center mb-4">Order ${data.info.id_pesanan} - Meja ${data.info.nama_pelanggan}</span>
-                <div id="order-list" class="flex-grow overflow-y-auto py-4 space-y-4 pr-2">
-                    ${data.items.map((item, index) => {
-                        const subtotal = item.qty * item.harga;
-                        return `
-                            <div class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 shadow-sm">
-                                <div class="w-8 h-8 bg-black text-white rounded-full flex items-center justify-center font-bold text-sm">${index + 1}</div>
-                                <div class="flex-grow">
-                                    <p class="font-semibold text-gray-800">${escapeHTML(item.nama_menu)} <span class="text-gray-500 font-medium text-sm">x${item.qty}</span></p>
-                                    <p class="text-sm text-gray-700 font-bold">${rupiah(subtotal)}</p>
-                                </div>
-                            </div>`;
-                    }).join('')}
-                </div>
-                <div class="mt-auto pt-4 border-t border-gray-200">
-                    <button id="payment-button" class="w-full bg-blue-700 text-white font-bold py-3 rounded-lg hover:bg-blue-800 transition-colors shadow-md">Lanjut Pembayaran</button>
-                </div>`;
-            orderDetailContainer.innerHTML = detailHTML;
-            orderDetailContainer.classList.remove('hidden');
-            orderDetailContainer.classList.add('flex');
-            
-            // Tambahkan event listener ke tombol 'Lanjut Pembayaran' yang baru dibuat
-            document.getElementById('payment-button').addEventListener('click', openPaymentModal);
-        }
-        
-        function openPaymentModal() {
-            if (!currentOrderData) return showModal('Perhatian', 'Pilih order terlebih dahulu!');
-            
-            let subtotal = currentOrderData.items.reduce((acc, item) => acc + (item.qty * item.harga), 0);
-            let pajak = subtotal * 0.12;
-            let total = subtotal + pajak;
-
-            const paymentModalHTML = `
-                <div class="bg-white rounded-lg shadow-xl p-8 w-[600px] h-auto flex flex-col">
-                    <h2 class="text-xl font-bold text-gray-800 text-center mb-6">Order ${currentOrderData.info.id_pesanan} - Meja ${currentOrderData.info.nama_pelanggan}</h2>
-                    <div class="flex-grow flex gap-6">
-                        <div class="w-1/2 overflow-y-auto py-4 space-y-4 pr-2 border-r border-gray-200">${document.getElementById('order-list').innerHTML}</div>
-                        <div class="w-1/2 flex flex-col justify-start space-y-4 pl-6 py-4">
-                            <div class="mb-4">
-                                <h3 class="font-bold text-lg mb-2">Metode Pembayaran</h3>
-                                <div class="space-y-2">
-                                    ${['Tunai', 'Kartu', 'QRIS'].map(method => `
-                                        <label class="flex items-center gap-3 cursor-pointer">
-                                            <input type="radio" name="metode" value="${method}" class="w-4 h-4"><span>${method}</span>
-                                        </label>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            <div class="flex justify-between font-medium text-lg border-t pt-4"><span>Subtotal</span><span>${rupiah(subtotal)}</span></div>
-                            <div class="flex justify-between font-medium text-lg"><span>Pajak (12%)</span><span>${rupiah(pajak)}</span></div>
-                            <div class="flex justify-between font-bold text-xl"><span>Total</span><span>${rupiah(total)}</span></div>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-end gap-4">
-                        <button id="close-modal-button" class="px-6 py-2 bg-[#FEE2E2] text-[#DC2626] font-semibold rounded-lg hover:bg-[#FECACA]">Kembali</button>
-                        <button id="confirm" class="px-6 py-2 bg-[#D1FAE5] text-[#059669] font-semibold rounded-lg hover:bg-[#A7F3D0]">Konfirmasi</button>
-                    </div>
-                </div>`;
-            paymentModal.innerHTML = paymentModalHTML;
-            paymentModal.classList.remove('hidden');
-            paymentModal.classList.add('flex');
-
-            // Tambahkan event listener untuk tombol di dalam modal pembayaran
-            document.getElementById('close-modal-button').addEventListener('click', () => paymentModal.classList.add('hidden'));
-            document.getElementById('confirm').addEventListener('click', confirmPayment);
-        }
-        
-        function confirmPayment() {
-            const selectedMetode = document.querySelector('#payment-modal input[name="metode"]:checked');
-            if (!selectedMetode) return showModal('Perhatian', 'Silakan pilih metode pembayaran.');
-
-            const metodePembayaran = selectedMetode.value;
-            const orderId = currentOrderData.info.id_pesanan;
-
-            showModal('Konfirmasi', `Anda yakin ingin mengonfirmasi pembayaran untuk Order ${orderId}?`, 'confirm', () => {
-                fetch(`${baseUrl}/src/pembayaranDb.php?action=confirm_payment`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id_pesanan: orderId, metode: metodePembayaran })
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        showModal('Sukses', 'Pembayaran berhasil dikonfirmasi!', 'alert', () => window.location.reload());
-                    } else {
-                        showModal('Gagal', 'Gagal mengonfirmasi pembayaran: ' + (data.message || 'Error'));
-                    }
-                })
-                .catch(error => showModal('Error', 'Terjadi kesalahan koneksi.'));
-            });
-        }
-
-        // --- EVENT BINDING AWAL ---
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            orderGrid.querySelectorAll('.order-card').forEach(card => {
-                const cardTitle = card.querySelector('h3').textContent.toLowerCase();
-                card.style.display = cardTitle.includes(searchTerm) ? 'flex' : 'none';
-            });
-        });
-
-        document.querySelectorAll('.detail-button').forEach(button => {
-            button.addEventListener('click', function () {
-                const orderId = this.dataset.orderId;
-                if (activeCard) activeCard.classList.remove('ring-2', 'ring-blue-500');
-                activeCard = this.closest('.order-card');
-                activeCard.classList.add('ring-2', 'ring-blue-500');
-
-                fetch(`${baseUrl}/src/pembayaranDb.php?action=get_order_detail&id=${orderId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        currentOrderData = data;
-                        updateDetailColumn(data);
-                    })
-                    .catch(err => showModal('Error', "Gagal mengambil data pesanan."));
-            });
-        });
-    });
-</script>
+  <script>
+    const BASE_URL = "<?= $base_url ?>";
+  </script>
+  <script src="<?= $base_url ?>/script/pembayaran.js"></script>
 </body>
 </html>

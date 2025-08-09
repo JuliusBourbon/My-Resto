@@ -8,9 +8,16 @@ function getUnpaidOrders() {
     $sql = "
         SELECT 
             p.id_pesanan,
-            m.nomor AS nama_pelanggan,
+            p.nama AS nama_pelanggan,
             py.total_harga,
-            py.status
+            py.status,
+            -- --- BLOK PERUBAHAN DIMULAI DI SINI ---
+            CASE
+                WHEN m.nomor = 11 
+                THEN CONCAT('11-', CASE WHEN m.id_meja % 10 = 0 THEN 10 ELSE m.id_meja % 10 END)
+                ELSE m.nomor
+            END AS nomor_meja
+            -- --- BLOK PERUBAHAN SELESAI ---
         FROM pembayaran py
         JOIN pesanan p ON py.id_pesanan = p.id_pesanan
         JOIN meja m ON p.id_meja = m.id_meja
@@ -37,7 +44,14 @@ function getOrderDetail($orderId) {
     $items = [];
 
     $stmtInfo = $conn->prepare("
-        SELECT p.id_pesanan, m.nomor AS nama_pelanggan 
+        SELECT 
+            p.id_pesanan, 
+            p.nama AS nama_pelanggan, -- Ambil nama pelanggan yang benar
+            CASE
+                WHEN m.nomor = 11 
+                THEN CONCAT('11-', CASE WHEN m.id_meja % 10 = 0 THEN 10 ELSE m.id_meja % 10 END)
+                ELSE m.nomor
+            END AS nomor_meja_formatted
         FROM pesanan p 
         JOIN meja m ON p.id_meja = m.id_meja 
         WHERE p.id_pesanan = ?
@@ -82,12 +96,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_GET['action']) && $_GET['ac
         $conn->begin_transaction();
 
         // Update status pembayaran
-        $stmtPembayaran = $conn->prepare("UPDATE pembayaran SET status = 'Lunas', metode = ? WHERE id_pesanan = ? AND status = 'Belum Bayar'");
+        $stmtPembayaran = $conn->prepare("UPDATE pembayaran SET status = 'Lunas', metode = ?, tanggal_pembayaran = NOW() WHERE id_pesanan = ? AND status = 'Belum Bayar'");
         $stmtPembayaran->bind_param("si", $metode, $orderId);
         $stmtPembayaran->execute();
         if ($stmtPembayaran->affected_rows === 0) {
             throw new Exception("Pembayaran tidak ditemukan atau sudah lunas.");
         }
+
+        $stmtUpdatePesanan = $conn->prepare("UPDATE pesanan SET status = 'Lunas' WHERE id_pesanan = ?");
+        $stmtUpdatePesanan->bind_param("i", $orderId);
+        $stmtUpdatePesanan->execute();
+        $stmtUpdatePesanan->close();
 
         // Ambil id_meja
         $stmtGetMeja = $conn->prepare("SELECT id_meja FROM pesanan WHERE id_pesanan = ?");
@@ -131,5 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['action'])) {
         echo json_encode($detail);
         exit;
     }
+    
 }
 ?>

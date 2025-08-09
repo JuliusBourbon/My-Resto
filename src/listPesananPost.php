@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id_
         $conn->begin_transaction();
 
         try {
-            // Hitung total harga pesanan
-            $total_harga = 0;
+            // Hitung total harga pesanan (subtotal)
+            $subtotal = 0; // Ganti nama variabel agar lebih jelas
             $stmtHarga = $conn->prepare("
                 SELECT SUM(dt.jumlah * m.harga) AS total 
                 FROM detail_transaksi dt 
@@ -26,9 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id_
             $stmtHarga->execute();
             $resultHarga = $stmtHarga->get_result();
             if ($rowHarga = $resultHarga->fetch_assoc()) {
-                $total_harga = $rowHarga['total'] ?? 0;
+                $subtotal = $rowHarga['total'] ?? 0;
             }
             $stmtHarga->close();
+            
+            // --- PERUBAHAN DI SINI: Tambahkan PPN 12% ---
+            $total_harga = $subtotal * 1.12; // 100% (harga asli) + 12% (pajak)
 
             // Update status pesanan
             $stmtPesanan = $conn->prepare("UPDATE pesanan SET status = 'Preparing' WHERE id_pesanan = ?");
@@ -36,11 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'], $_POST['id_
             $stmtPesanan->execute();
             $stmtPesanan->close();
 
-            // Insert ke pembayaran
+            // Insert ke pembayaran dengan harga yang sudah termasuk pajak
             $stmtPembayaran = $conn->prepare("
                 INSERT INTO pembayaran (status, total_harga, id_pesanan) 
                 VALUES ('Belum Bayar', ?, ?)
             ");
+            // Gunakan variabel $total_harga yang sudah dikalikan pajak
             $stmtPembayaran->bind_param("di", $total_harga, $id_pesanan);
             $stmtPembayaran->execute();
             $stmtPembayaran->close();

@@ -4,17 +4,20 @@ require_once __DIR__ . '/connection.php';
 
 $pendingOrders = [];
 $queryPending = $conn->query("
-    SELECT 
-        p.id_pesanan, 
-        m.nomor AS nomor_meja, 
-        p.nama AS nama_pelanggan, 
-        p.status, 
-        p.waktu_pesan
-    FROM pesanan p
-    JOIN meja m ON p.id_meja = m.id_meja
-    WHERE p.status = 'Pending'
-    
-    ORDER BY p.waktu_pesan ASC
+    SELECT
+        p.id_pesanan,
+        p.nama AS nama_pelanggan,
+        p.waktu_pesan,
+        m.nomor AS nomor_meja,
+        m.id_meja 
+    FROM 
+        pesanan p
+    JOIN 
+        meja m ON p.id_meja = m.id_meja
+    WHERE 
+        p.status = 'Pending'
+    ORDER BY 
+        p.waktu_pesan ASC;
 ");
 if ($queryPending) {
     while ($row = $queryPending->fetch_assoc()) {
@@ -35,14 +38,22 @@ $confirmedOrders = [];
 $queryConfirmed = $conn->query("
     SELECT 
         p.id_pesanan, 
-        m.nomor AS nomor_meja, 
         p.nama AS nama_pelanggan, 
         p.status, 
-        p.waktu_pesan
-    FROM pesanan p
-    JOIN meja m ON p.id_meja = m.id_meja
-    WHERE p.status IN ('Preparing', 'Ready To Serve')
-    ORDER BY p.waktu_pesan ASC
+        p.waktu_pesan,
+        CASE
+            WHEN m.nomor = 11 
+            THEN CONCAT('11-', CASE WHEN m.id_meja % 10 = 0 THEN 10 ELSE m.id_meja % 10 END)
+            ELSE m.nomor
+        END AS nomor_meja
+    FROM 
+        pesanan p
+    JOIN 
+        meja m ON p.id_meja = m.id_meja
+    WHERE 
+        p.status IN ('Preparing', 'Ready To Serve')
+    ORDER BY 
+        p.waktu_pesan ASC;
 ");
 
 if ($queryConfirmed) {
